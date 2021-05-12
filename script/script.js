@@ -1,26 +1,30 @@
 jQuery(document).ready(function($) {
 	
-	if(window.location.href.indexOf("form-name")!==-1){
+	if(window.location.href.indexOf("forms_to_pdf")!==-1)
+	
+	{	if(window.location.href.indexOf("form-name")!==-1){
 		document.getElementById("bulk-export").style.display = "block";
 		document.getElementById("data-filter").style.display = "block";
 		document.getElementById("display_setup").style.display = "block";
+	
+		
+			//Set date input field's max date to today
 
-		//Set date input field's max date to today
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+		var yyyy = today.getFullYear();
+		if(dd<10){
+				dd='0'+dd
+			} 
+			if(mm<10){
+				mm='0'+mm
+			} 
 
-	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth()+1; //January is 0!
-	var yyyy = today.getFullYear();
-	if(dd<10){
-			dd='0'+dd
-		} 
-		if(mm<10){
-			mm='0'+mm
-		} 
-
-	today = yyyy+'-'+mm+'-'+dd;
-	document.getElementById("startdate").setAttribute("max", today);
-	document.getElementById("enddate").setAttribute("max", today);
+		today = yyyy+'-'+mm+'-'+dd;
+		document.getElementById("startdate").setAttribute("max", today);
+		document.getElementById("enddate").setAttribute("max", today);
+	}
 }
 		//datatable
 	//	document.getElementById('table_id').DataTable();
@@ -100,4 +104,28 @@ function launchModalEditTemplate(button){
 
 function launchModalAddTemplate(){
 	jQuery('#addTemplateModal').modal('show'); 
+}
+
+function select_f2p_import_csv(){
+	var url = jQuery('#f2p_name').attr('action');
+	var form_name =jQuery('#form-name').val();
+	if(isNaN(form_name)){
+		url+="&form-name="+form_name;
+   	}
+	window.location = url;
+}
+
+
+//Check import file is CSV file or not
+function checkfile(sender) {
+
+	var validExts = new Array(".csv");
+	var fileExt = sender.value;
+	fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+	if (validExts.indexOf(fileExt) < 0) {
+		sender.value = '';
+		alert("Invalid file uploaded, Please upload '" + validExts.toString() + "' types file only.");
+	  return false;
+	}
+	else return true;
 }

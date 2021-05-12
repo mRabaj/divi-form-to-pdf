@@ -188,8 +188,10 @@ msgstr ""
 #| msgid ""
 #| "To change the Field title, Hide field and change the position of fields "
 #| "using Drag and Drop"
-msgid "To change the Field title, Hide field"
-msgstr "Pour modifier le titre du champ, Masquer le champ"
+msgid ""
+"To change the Field title, Hide field"
+msgstr ""
+"Pour modifier le titre du champ, Masquer le champ"
 
 #: diviform2pdf.php:204
 msgid "Type something..."

@@ -78,6 +78,14 @@ function form_to_pdf_submenu() {
         'forms_to_pdf_import',
         'forms_to_pdf_import_submenu_cb'
     );
+    add_submenu_page(
+        'edit.php?post_type=formstopdf_db',
+        __('Import CSV', 'form-pdf'),
+        __('Import CSV ', 'form-pdf'),
+        'manage_options',
+        'forms_to_pdf_import_csv',
+        'forms_to_pdf_import_csv_submenu_cb'
+    );
 }
 if(!function_exists("removeAccents")){
     function remove_accents($str) {
@@ -125,7 +133,7 @@ function form_to_pdf_submenu_cb() {
             );
 
             $THEAD_TFOOT_FIELD = array_replace( $THEAD_TFOOT_FIELD, $save_field_settings);
-
+            //une recherche parmi les champs pour savoir qui cacher
             foreach($THEAD_TFOOT_FIELD as $key => $field){
                 if(isset($_POST['visible_'.$key])){
                     $hide = substr($_POST['visible_'.$key], 2);
@@ -198,9 +206,8 @@ function form_to_pdf_submenu_cb() {
                     echo '</form>'; // fin de form 
 
                     echo '<div class="col-12" id="display_setup">';
-                        echo '<div  class="alert alert-light" role="alert">'.__('To change the Field title, Hide field and change the position of fields using Drag and Drop ','form-pdf').'<a href="#" class="btn btn-outline-info" onclick="displaySettingsModal()">'.__('from here.','form-pdf').'</a></div>';
+                        echo '<div  class="alert alert-light" role="alert">'.__('To change the Field title, Hide field and change the position of fields ','form-pdf').'<a href="#" class="btn btn-outline-info" onclick="displaySettingsModal()">'.__('from here.','form-pdf').'</a></div>';
                     echo '</div>';
-
 
                     if (isset($_REQUEST['form-name']) && !empty($_REQUEST['form-name'])) {
                             
@@ -376,6 +383,7 @@ function form_to_pdf_submenu_cb() {
                                         </tr>
                                     </thead>
                                     <tbody id="the-list">  <?php 
+                                            //appliquer un filtre de limitation de mots à 30
                                             $display_character = (int) apply_filters('vsz_display_character_count',30);
                                             $id_find_search =array();  
                                             $id_find_date=array();
@@ -662,7 +670,7 @@ function form_to_pdf_submenu_cb() {
                                                 }
                                                 if(isset($_POST['f2p-search']) && empty($_POST['f2p-search']) && isset($_POST['startdate']) && isset($_POST['enddate']) && empty($_POST['startdate']) && empty($_POST['enddate'])){
                                                     foreach ($posts as $post) { 
-                                                        if($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                                                                        
+                                                        if($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                                                                       
                                                                 if ($data['extra']['submitted_on'] == $form_name) {
                                                                     echo '<tr>';
                                                                         echo '<th class="manage-column"></th>';
@@ -1339,7 +1347,7 @@ function forms_to_pdf_import_submenu_cb(){
 
         if( !empty($_FILES["fileUpload"]["name"])){
             // Allow certain file formats
-            $allowTypes = array('jpg','png','jpeg','gif','pdf');
+            $allowTypes = array('jpg','png','jpeg','gif');
             if(in_array($fileType, $allowTypes)){
                 // Upload file to server
                 if(move_uploaded_file($_FILES["fileUpload"]["tmp_name"], $targetFilePath)){
@@ -1442,6 +1450,189 @@ function forms_to_pdf_import_submenu_cb(){
 
 }
 
+function forms_to_pdf_import_csv_submenu_cb(){
+
+    $THEAD_TFOOT_FIELD = array(
+        'et_pb_contact_name_0'      => 'Name',
+        'et_pb_contact_email_0'     => 'Email',
+        'et_pb_contact_message_0'   => 'Message',
+        'post_date'                 => 'Submit date'
+    );
+    $display_character = (int) apply_filters('vsz_display_character_count',30);
+    $url="/edit.php?post_type=formstopdf_db&page=forms_to_pdf_import_csv";
+        echo '<div class="container">';
+            if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
+                $forms = array();
+                                    
+                foreach ($posts as $post) {
+                    if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {           
+                        $forms[$data['extra']['submitted_on']] = $data['extra']['submitted_on'];                          
+                    }
+                }             
+                echo '<form method="" name="f2p_name" id="f2p_name" action="'.admin_url(esc_url($url)).'">';   
+                    echo '<div class="row">';                 
+                        echo '<div class="col-12">';
+                            echo' <div class="card">
+                                <div class="card-body">';
+                                echo '<h5 class="card-subtitle mb-2 text-muted">'. __('Select form name :', 'form-pdf') .'</h5>';
+                                    echo '<select class="form-select" id="form-name" onchange="select_f2p_import_csv()" name="form-name">';
+                                        echo '<option value="1">'. __('Select form name', 'form-pdf') .'</option>';
+                                        $alpha_forms = array();
+                                        foreach ($forms as $form) {
+                                            $alpha_forms[$form] = $form;
+                                        }
+                                        // form sorting
+                                        ksort($alpha_forms);
+                                        foreach ($alpha_forms as $form) {   
+                                            echo '<option  value="' . $form . '" ' . (isset($_REQUEST['form-name']) && $_REQUEST['form-name'] == $form ? 'selected="selected"' : '') . '>' . $form . '</option>';
+                                        }
+                                    echo '</select>';
+                            echo '</div></div>';
+                        echo '</div>';
+                    // echo '<input type="submit" name="" class="button-primary" value="'. __('View Form', 'form-pdf').'" />';
+                echo '</form>'; // fin de form  
+                echo '</div>';
+            } 
+
+            if(isset($_REQUEST['form-name'])&&$_REQUEST['form-name']){
+            ?>
+                 <!-- table match csv -->
+            <form method="post">
+                                  
+                            <table class="table table-success table-striped">
+                                                        <thead>
+                                                            <tr class="form-field form-required">
+                                                                <th><?php echo __('Field name','form-test'); ?></th>
+                                                                <th><?php echo __('Type','form-test'); ?></th>
+                                                                <!--<th>Option value</th>-->
+                                                                <th><?php echo __('Match CSV Column','form-test'); ?></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tr class="form-field form-required">
+														<td><?php echo __('name','form-test'); ?></td>
+														<td><?php echo __('text','form-test'); ?></td>
+														<!--<td></td>-->
+														<td><input class="" type="text" name="form_match_key[name]" value="name">
+														<!-- Define fields key related field type value -->
+														<input type="hidden" name="df2p_field_type[name]" value="text">
+														</td>
+													</tr><tr class="form-field form-required">
+														<td> <?php echo __('email','form-test'); ?></td>
+														<td><?php echo __('email','form-test'); ?></td>
+														<!--<td></td>-->
+														<td><input class="" type="text" name="form_match_key[email]" value="email">
+														<!-- Define fields key related field type value -->
+														<input type="hidden" name="df2p_field_type[email]" value="email">
+														</td>
+													</tr><tr class="form-field form-required">
+														<td><?php echo __('subject','form-test'); ?></td>
+														<td><?php echo __('text','form-test'); ?></td>
+														<!--<td></td>-->
+														<td><input class="" type="text" name="form_match_key[message]" value="message">
+														<!-- Define fields key related field type value -->
+														<input type="hidden" name="df2p_field_type[message]" value="text">
+														</td>
+													</tr>
+											<tr class="form-field form-required">
+												<td><?php echo __('submit_time','form-test'); ?></td>
+												<td><?php echo __('text','form-test'); ?></td>
+												<td><input class="regular-text code" type="text" name="form_match_key[submit_time]" value="Submitted">
+												</td>
+											</tr>
+										</tbody>
+									</table> 
+                                    
+									<table class="table table-borderless">
+									<tbody><tr>
+										<th><h3 class=""><?php echo __('Import CSV','form-test'); ?></h3></th>
+										<td>	
+										</td>	
+									</tr>
+									<tr class="form-field form-required">
+										<th><label for="importFormList"><?php echo __('Upload CSV :','form-test'); ?></label></th>
+										<td>
+											<input type="file" name="importformlist" id="importformlist" accept=".csv" onchange="checkfile(this);">
+										</td>
+									</tr>
+									<tr class="form-field form-required">
+										<th></th>
+										<td>
+											<input type="submit" id="import_csv" name="submit_csv" value="Import Data" class="button button-primary">
+										</td>
+									</tr>
+								</tbody></table>
+                        </form>
+                 <?php
+       
+            }
+
+        if(isset($_POST['submit_csv'])&& isset($_FILES['importformlist'])){
+              //Define site global variables      
+           
+         print "test";
+         wp_die();
+
+         // File upload path
+         $targetDir = plugin_dir_path( FORM_TO_PDF_FILE )."uploads/";
+         $fileName = basename($_FILES['importformlist']["name"]);
+         $targetFilePath = $targetDir . $fileName;
+         $fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
+         $file_contents= file_get_contents ($_FILES['importformlist']['tmp_name']);
+         $file_hex="";
+         $header = NULL;
+         $delimiter = ",";
+         $data = array();
+         $handle = @fopen($_FILES['importformlist'], "r"); 
+         if ($handle) {        
+             // fgetcsv — Obtient une ligne depuis un pointeur de fichier et l'analyse pour des champs CSV
+                while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+
+                    //is_null — Indique si une variable vaut NULL
+                    if (is_null($header)) {
+                        foreach ($row as $key => $value) {
+                            $header[] = CharacterCleaner($value);
+                        }
+                    } else {
+                        // array_combine — Crée un tableau à partir de deux autres tableaux
+                        $data[(isset($row[0]) ? $row[0] : '')] = array_combine($header, $row);
+                    }
+                    
+                }   fclose($handle);
+         } 
+
+         print_r($data);
+ 
+        //  if( !empty($_FILES["fileUpload"]["name"])){
+        //      // Allow certain file formats
+        //      $allowTypes = array('csv');
+        //      if(in_array($fileType, $allowTypes)){
+        //          // Upload file to server
+        //          if(move_uploaded_file($_FILES["fileUpload"]["tmp_name"], $targetFilePath)){
+        //              // Insert image file name into database
+        //              $type = substr($fileName, strpos($fileName, ".")+1);
+                     
+        //              if($insert){
+        //                  unlink(plugin_dir_path( FORM_TO_PDF_FILE )."uploads/".$fileName); // delete le fichier
+        //                  // $statusMsg = "The file ".$fileName." has been uploaded successfully.";
+        //                  echo '<script>window.alert("Le fichier '.$fileName.' a été envoyé avec succés.");</script>';
+        //              }else{
+        //                  $df2p_img_upload_error->add('Send_img_fail','Sending file fails, try again in a few moments.');
+        //              } 
+        //          }else{
+        //              $df2p_img_upload_error->add('sending error','An error occurred while sending the file');
+        //          }
+        //      }else{
+        //          $df2p_img_upload_error->add('only_images','Only JPG, JPEG, PNG and PDF images can be sent');
+        //          // echo '<script>window.alert("Only JPG, JPEG, PNG and PDF images can be sent");</script>';
+        //      }
+        //  }else{
+        //      echo '<script>window.alert("Veuillez choisir un fichier à envoyer");</script>';
+        //  }
+        }
+
+}
+   
+
 function download_or_delete_img_f2p(){
     global $wpdb;
     if(isset($_POST['download_img']) && $_POST['download_img']){
@@ -1450,16 +1641,11 @@ function download_or_delete_img_f2p(){
 
         if(!empty($id)){
 
-            // selectionner une image dans la BDD
-            try {
+                    // selectionner une image dans la BDD           
                     $sql = $wpdb->prepare("SELECT  `id_img`, `img_title`, `img_blob`, `img_type` FROM ".IMG_TABLE_NAME." WHERE `id_img`= %d",$id);
                     $resultById = $wpdb->get_results($sql);
-                 }
-            catch(Exception $e)
-                {
-                    print "Error !:".$e->getMessage()."<br/>";
-                    die();
-                }
+        
+                
                 foreach($resultById as $key => $resultat){
                     $base64 = $resultat->img_blob;
                     $type   = $resultat->img_type;
@@ -1483,7 +1669,7 @@ function download_or_delete_img_f2p(){
                 header('Content-Length: ' . strlen($data));
                 flush(); // Flush system output buffer
                 echo $data;
-                die();
+                wp_die();
         }
     }
             //supprimer une image depuis la BDD
@@ -1496,7 +1682,7 @@ function download_or_delete_img_f2p(){
             catch(Exception $e)
             {
                 print "Error !:".$e->getMessage()."<br/>";
-                die();
+                wp_die();
             }            
         }       
     
@@ -1597,7 +1783,7 @@ function forms_to_pdf_download_csv() {
                 header('Content-Disposition: attachment; filename=' . sanitize_title($_REQUEST['form-name']) . '.csv');
                 header('Pragma: no-cache');
                 echo implode("\n", $rows);
-                die;
+                wp_die();
             }
         }
     }
