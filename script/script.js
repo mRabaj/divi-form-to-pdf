@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
 	
 	if(window.location.href.indexOf("forms_to_pdf")!==-1)
 	
-	{	if(window.location.href.indexOf("form-name")!==-1){
+	{	
 		document.getElementById("bulk-export").style.display = "block";
 		document.getElementById("data-filter").style.display = "block";
 		document.getElementById("display_setup").style.display = "block";
@@ -24,7 +24,7 @@ jQuery(document).ready(function($) {
 		today = yyyy+'-'+mm+'-'+dd;
 		document.getElementById("startdate").setAttribute("max", today);
 		document.getElementById("enddate").setAttribute("max", today);
-	}
+	
 }
 		//datatable
 	//	document.getElementById('table_id').DataTable();

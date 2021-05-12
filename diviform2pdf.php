@@ -1551,7 +1551,7 @@ function forms_to_pdf_import_csv_submenu_cb(){
 									<tr class="form-field form-required">
 										<th><label for="importFormList"><?php echo __('Upload CSV :','form-test'); ?></label></th>
 										<td>
-											<input type="file" name="importformlist" id="importformlist" accept=".csv" onchange="checkfile(this);">
+											<input type="file" name="importformlist" id="importformlist" onchange="checkfile(this);">
 										</td>
 									</tr>
 									<tr class="form-field form-required">
@@ -1566,11 +1566,11 @@ function forms_to_pdf_import_csv_submenu_cb(){
        
             }
 
-        if(isset($_POST['submit_csv'])&& isset($_FILES['importformlist'])){
+        if(isset($_POST['submit_csv'])){
               //Define site global variables      
            
          print "test";
-         wp_die();
+ 
 
          // File upload path
          $targetDir = plugin_dir_path( FORM_TO_PDF_FILE )."uploads/";
@@ -1601,6 +1601,8 @@ function forms_to_pdf_import_csv_submenu_cb(){
          } 
 
          print_r($data);
+
+         
  
         //  if( !empty($_FILES["fileUpload"]["name"])){
         //      // Allow certain file formats
@@ -1783,7 +1785,7 @@ function forms_to_pdf_download_csv() {
                 header('Content-Disposition: attachment; filename=' . sanitize_title($_REQUEST['form-name']) . '.csv');
                 header('Pragma: no-cache');
                 echo implode("\n", $rows);
-                wp_die();
+               die;
             }
         }
     }
