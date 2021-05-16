@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 	
-	if(window.location.href.indexOf("forms_to_pdf")!==-1)
+	if(window.location.href.indexOf("forms_to_pdf_home")!==-1)
 	
 	{	
 		document.getElementById("bulk-export").style.display = "block";
@@ -24,10 +24,18 @@ jQuery(document).ready(function($) {
 		today = yyyy+'-'+mm+'-'+dd;
 		document.getElementById("startdate").setAttribute("max", today);
 		document.getElementById("enddate").setAttribute("max", today);
+
+		(function () {
+			'use strict'
+			feather.replace()
+	
+			})()
+
+		// if(jQuery("#noRecordsFounds")){
+		// 	jQuery("#buttonDownload").attr('disabled', true)
+		// }
 	
 }
-		//datatable
-	//	document.getElementById('table_id').DataTable();
 
         jQuery('#img_historique').hide();
 
@@ -44,13 +52,35 @@ jQuery(document).ready(function($) {
             jQuery('#img_historique').hide();
         });
 
-	
 
-	(function () {
-		'use strict'
-		feather.replace()
 
-		})()
+		//Setup icon functionality in setting page
+	jQuery('#f2p_display-settings li span.dashicons').click(function(event) {
+        var $this = jQuery(this);
+        var $parent = $this.parent();
+        var $custom_label = $parent.find('.txt_show');
+        //currently visible
+        if ($this.hasClass('dashicons-visibility')) {
+            $this.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+            $parent.removeClass('show').addClass('hide');
+            $custom_label.val('0');
+        } else if ($this.hasClass('dashicons-hidden')) {
+            $this.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+            $parent.removeClass('hide').addClass('show');
+            $custom_label.val('1');
+        }
+    });
+
+
+	// var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+	// triggerTabList.forEach(function (triggerEl) {
+	// var tabTrigger = new bootstrap.Tab(triggerEl)
+
+	// triggerEl.addEventListener('click', function (event) {
+	// 	event.preventDefault()
+	// 	tabTrigger.show()
+	// })
+	// })
 
 
 });
@@ -73,33 +103,66 @@ function displaySettingsModal(){
 	jQuery('#f2p_display-settings').modal('show'); 
 }
 
-function renameField(input){
-	console.log("text")
-	var fieldName = jQuery(input).val()
-	var fieldNameToChange = jQuery('.et_pb_contact_name_0').data("key")
-	var fieldNameToChangeEmail = jQuery('#et_pb_contact_email_0').data("key")
-	
-			document.getElementsByClassName('et_pb_contact_name_0').innerText=fieldName
-		//	document.getElementsByClassName('et_pb_contact_email_0').innerText=fieldName
-
-}
 
 function launchModalEditTemplate(button){
 	var	id_launch_modal=parseInt(jQuery(button).data("id"));
 	jQuery('#editTemplateModal'+id_launch_modal).modal('show'); 
 }
 
-// function setWidthHeight(select) {
-// 	var	widthPDF  = parseInt(jQuery(select).data("width"));
-// 	var heightPDF = parseInt(jQuery(select).data("height"));
-// 	console.log(widthPDF)
-// 	console.log(heightPDF)
-	
-// 	if(!isNaN(widthPDF) && !isNaN(heightPDF)){
-// 		jQuery("#editWidthPDF").attr('value', widthPDF)
-// 		jQuery("#editHeightPDF").attr('value', heightPDF)
-// 	}
-// }
+function changeWidthNHeight(select) {	
+
+	switch (jQuery(select).val()) {
+		case 'a4_portrait':
+			jQuery("#editWidthPDF").attr('value', 595)
+			jQuery("#editHeightPDF").attr('value', 842)
+			jQuery("#addWidthPDF").attr('value', 595)
+			jQuery("#addHeightPDF").attr('value', 842)
+		break;
+		case 'a4_landscape':
+			jQuery("#editWidthPDF").attr('value', 842)
+			jQuery("#editHeightPDF").attr('value', 595)
+			jQuery("#addWidthPDF").attr('value', 842)
+			jQuery("#addHeightPDF").attr('value', 595)
+		break;
+		case 'letter':
+			jQuery("#editWidthPDF").attr('value', 612)
+			jQuery("#editHeightPDF").attr('value', 792)
+			jQuery("#addWidthPDF").attr('value', 612)
+			jQuery("#addHeightPDF").attr('value', 792)
+		break;
+		case 'note':
+			jQuery("#editWidthPDF").attr('value', 540)
+			jQuery("#editHeightPDF").attr('value', 842)
+			jQuery("#addWidthPDF").attr('value', 540)
+			jQuery("#addHeightPDF").attr('value', 842)
+		break;
+		case 'legal':
+			jQuery("#editWidthPDF").attr('value', 612)
+			jQuery("#editHeightPDF").attr('value', 1008)
+			jQuery("#addWidthPDF").attr('value', 612)
+			jQuery("#addHeightPDF").attr('value', 1008)
+		break;
+		case 'tabloid':
+			jQuery("#editWidthPDF").attr('value', 792)
+			jQuery("#editHeightPDF").attr('value', 1224)
+			jQuery("#addWidthPDF").attr('value', 792)
+			jQuery("#addHeightPDF").attr('value', 1224)
+		break;
+		case 'executive':
+			jQuery("#editWidthPDF").attr('value', 522)
+			jQuery("#editHeightPDF").attr('value', 756)
+			jQuery("#addWidthPDF").attr('value', 522)
+			jQuery("#addHeightPDF").attr('value', 756)
+		break;
+		case 'postcard':
+			jQuery("#editWidthPDF").attr('value', 283)
+			jQuery("#editHeightPDF").attr('value', 416)
+			jQuery("#addWidthPDF").attr('value', 283)
+			jQuery("#addtHeightPDF").attr('value', 416)
+		break;
+		
+	}
+}
 
 
 function launchModalAddTemplate(){
@@ -129,3 +192,19 @@ function checkfile(sender) {
 	}
 	else return true;
 }
+
+// function changeDachicons(span){
+// 	var status =jQuery('.dashicons dashicons-visibility');
+// 	console.log(status)
+// }
+
+function verifyDate(type){
+	// put the maximum at the start date if the end date is at least
+	if(type==1){
+		document.getElementById("enddate").setAttribute("min", jQuery('#startdate').val());
+	}
+	else if(type==2){
+		document.getElementById("startdate").setAttribute("max", jQuery('#enddate').val());
+	}	
+}
+	
