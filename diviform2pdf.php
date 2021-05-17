@@ -1952,18 +1952,20 @@ function forms_to_pdf_download_pdf() {
                             <html>
                             <head>
                                 <meta http-equiv="Content-Type" content="text/html;" />
-                                <style>table, th, td {
-                                        border: 1px solid #ddd;
-                                        border-collapse: collapse;
-                                        table-layout:fixed;
-                                        width:100%;
-                                        white-space: normal;
-                                        word-wrap: break-word; 
-                                    }
-                                    td {padding:5px;}
-                                    tr {border-color:#0d6efd;}
-                                </style>
-                                </head>
+                               <style>
+                               table, th, td {
+                                border: 1px solid #ddd;
+                                border-collapse: collapse;
+                                table-layout:fixed;
+                                width:100%;
+                                white-space: normal;
+                                word-wrap: break-word; 
+                            }
+                            table tr th {width:50%;}
+                            td {padding:5px;}
+                            tr {border-color:#0d6efd;}
+                               </style>
+                            </head>
                             <body>';
                 // add a picture if selected in template
                 if(!empty($resultLogo)){
@@ -1973,39 +1975,25 @@ function forms_to_pdf_download_pdf() {
                 }
                 $content.= '<div class="container"><div style="text-align:center;font-size:18px;margin:20px;line-height:30px;">'.$form_title.'</div>';		
     
-                $content.= '<table border="0" cellpadding="0" cellspacing="0" style="margin-top:0;margin-left:auto;margin-right:auto;margin-bottom:10px;width:100%;">';
-                $content.='<thead><tr><th>Nom du champ</th><th>Valeur</th></tr></thead>';
+                $content.= '<table>';
+                $content.='<thead><tr><th>Nom du champ</th><th>Valeur</th></tr></thead><tbody>';
 
                 if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
-    
-                    $content .= '<tr><td style="font-weight:bold;font-size:14px;color:#000;padding:5px;line-height:20px;" CELLSPACING=10>' . __('Date', 'form-pdf') . '</td></tr> <tr><td style="font-weight:bold;font-size:14px;color:#000;padding:5px;line-height:20px;" CELLSPACING=10>' . __('Submitted On', 'form-pdf') . '</td>';
-    
-                    foreach ($posts as $post) {
-                        if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {
-                            if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {                        
-                                foreach ($data['data'] as $field) {
-                                    $content .= '<td style="font-weight:bold;font-size:14px;color:#000;padding:5px;line-height:20px;" CELLSPACING=10>' . $field['original_name'] . '</td>';
-                                }
-                                break;
-                                $content .= '</tr>';                            
-                            }
-                        }
-                    }                      
+                                           
                     if (isset($_REQUEST['export_id'])&& !empty($_REQUEST['export_id'])){                      
-                            foreach($_REQUEST['export_id'] as $key=> $ids){                          
+                            foreach($_REQUEST['export_id'] as $key => $ids){                          
                                 if ($data = get_post_meta($ids, 'forms_to_pdf', true)){  
                                         if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){                                 
                                             foreach ($posts as $k => $post ) {
                                                 if($ids==$post->ID){                                          
                                                         $postDate=$post->post_date;
-                                                        $FormatFrDate=date('d-m-Y H:i:s', strtotime($postDate));
-                                                        // $FormatFrDate="test";
-                                                        $content .= '<tr>';
-                                                        $content .= '<td style="padding:5px;line-height:20px;" CELLSPACING=10>' .  $FormatFrDate. '</td><td style="padding:5px;line-height:20px;" CELLSPACING=10>' . $data['extra']['submitted_on'] . '</td>';
+                                                        $FormatFrDate=date('d-m-Y H:i:s', strtotime($postDate));                                            
+                                                     
+                                                        $content .= '<tr><td>' . __('Date', 'form-pdf') . '</td><td>' .  $FormatFrDate. '</td></tr><tr><td>' . __('Submitted On', 'form-pdf') . '</td><td>' . $data['extra']['submitted_on'] . '</td></tr>';
                                                             foreach ($data['data'] as $field) {
-                                                                $content .= '<td style="padding:5px;line-height:20px" CELLSPACING=10>' . $field['value']. '</td>';
+                                                                $content .= '<tr><td>'. $field['original_name'] .'</td><td>' . $field['value']. '</td></tr>';
                                                                     }
-                                                                $content .= '</tr>';                                    
+                                                                                                
                                                 }
                                             }                                
                                         }
@@ -2017,17 +2005,16 @@ function forms_to_pdf_download_pdf() {
                                     if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {
                                         $postDate=$post->post_date;
                                         $FormatFrDate=date('d-m-Y H:i:s', strtotime($postDate));
-                                        $content .= '<tr><td style="padding:5px;line-height:20px;" CELLSPACING=10>' .  $FormatFrDate. '</td><td style="padding:5px;line-height:20px;" CELLSPACING=10>' . $data['extra']['submitted_on'] . '</td>';
+                                        $content .= '<tr><td>' . __('Date', 'form-pdf') . '</td><td style="padding:5px;line-height:20px;" CELLSPACING=10>' .  $FormatFrDate. '</td></tr><tr><td>' . __('Submitted On', 'form-pdf') . '</td><td style="padding:5px;line-height:20px;" CELLSPACING=10>' . $data['extra']['submitted_on'] . '</td></tr>';
                                             foreach ($data['data'] as $field) {
-                                                $content .= '<td style="padding:5px;line-height:20px" CELLSPACING=10>' . $field['value']. '</td>';
+                                                $content .= '<tr><td>'. $field['original_name'] .'</td><td style="padding:5px;line-height:20px" CELLSPACING=10>' . $field['value']. '</td></tr>';
                                                 }
-                                        $content .= '</tr>';
                                     }
                                 }
                             }
                         }
                 }
-                     $content.='</table></div></body></html>';
+                     $content.=' </tbody></table></div></body></html>';
     
                     // *******************************************************************
                     //Close and output PDF document
