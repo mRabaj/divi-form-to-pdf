@@ -1465,7 +1465,7 @@ function forms_to_pdf_import_submenu_cb(){
                     $delimiter = ",";
                     $data_csv_import = array();
                     $handle = @fopen($_FILES['importformlist']['tmp_name'], "r"); 
-                    if ($handle) {        
+                    if ($handle !== false) {        
                         // fgetcsv — Obtient une ligne depuis un pointeur de fichier et l'analyse pour des champs CSV
                         while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 
@@ -1483,15 +1483,51 @@ function forms_to_pdf_import_submenu_cb(){
                     } 
                     
                  
-                    // print_r($data_csv_import);
-                    // wp_die();
+	// function csv_to_array($filename = '', $delimiter = ';')
+    // {
+    //         // file_exists — Vérifie si un fichier ou un dossier existe
+    //     if (!file_exists($filename) || !is_readable($filename))
+    //      {   return FALSE;}
+        
+    //         // variable n'a pas encore reçu de valeur.
+    //     $header = NULL;
+       
+    //     $datas = array();
+    //         // fopen — Ouvre un fichier ou une URL
+    //      if (($handle = fopen($filename, 'r')) !== FALSE) {        
+    //              $firstLine=true;
+    //          // fgetcsv — Obtient une ligne depuis un pointeur de fichier et l'analyse pour des champs CSV
+    //         while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+    //           if($firstLine==false)
+    //           {
+    //               $datas[]=$data;
+    //           }
+    //         $firstLine=false;              
+                
+    //         }
+    //         fclose($handle);
+    //     }
+        
+    //     return $datas;
+    // }
+                // print_r($data_csv_import);
 
-                //    foreach($data_csv_import as $key => $value){
-                //        if($key == "name"){
+                   foreach($data_csv_import as $key => $value){
+                    
+                        // $dateSinceCsv = $value[0];                
+                        // $nameSinceCsv = $value[4]; 
 
-                //        }
-                //    }
+                        print_r($value);
+                    
 
+                    // if ($value['field_type'] == 'email') {
+                    //     $email = trim(strtolower($values));
+                    // }
+                    }
+
+                   
+                    wp_die();
+                  
                 //    $db_ins = array(
                 //     'post_title'  => date('Y-m-d H:i:s'),
                 //     'post_status' => 'publish',
