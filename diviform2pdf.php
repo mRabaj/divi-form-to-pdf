@@ -180,8 +180,8 @@ function form_to_pdf_submenu_cb() {
                                                                             echo '<div class="input-group mb-3">';   
                                                                                 // display the names of the fields                                                                          
                                                                                 echo '<span class="input-group-text" id="basic-addon3">'.__($field['original_name'],'form-pdf').'</span>';
-                                                                                echo '<input  type="text" class="form-control" id="basic-url" name="'.$field['original_name'].'" value="'.__($field['original_name'],'form-pdf').'" aria-describedby="basic-addon3">';
-                                                                                echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="" id="" value="1"></span>'; 
+                                                                                echo '<input  type="text" class="form-control" id="basic-url" name="'.$key.'" value="'.__($field['original_name'],'form-pdf').'" aria-describedby="basic-addon3">';
+                                                                                echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="visible_'.$key.'" id="" value="1"></span>'; 
                                                                             echo'</div>';                                                                
                                                                         echo'</li>';
                                                                     }
@@ -197,8 +197,7 @@ function form_to_pdf_submenu_cb() {
                                                             }
                                                         }
                                                     }
-                                            echo'</ul>';                                                                                                     
-                                                                                                                                            
+                                            echo'</ul>';                                                                                                                                                                                                          
                                             ?>         
                                         </div>
                                         <div class="modal-footer">
@@ -317,7 +316,7 @@ function form_to_pdf_submenu_cb() {
                                     echo '<div class="col-12">'; 
                                    
                                         ?>
-                                    <!-- display the table -->
+                                    <!-- start for display the table -->
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
@@ -387,10 +386,7 @@ function form_to_pdf_submenu_cb() {
                                                                                                             echo '<th class="manage-column"></th>';
                                                                                                             echo '<td class="manage-column column-cb check-column" ><input type="checkbox" name="export_id[]" value="'.$post->ID.'" /></td>';
                                                                                                             echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
-                                                                                                            foreach ($data['data'] as $key => $field) { 
-                                    
-                                                                                                               // if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
-                                                                                                                
+                                                                                                            foreach ($data['data'] as $key => $field) {                                                                                                                
                                                                                                                     $name = esc_html(html_entity_decode($field['value']));
                                                                                                                     $name_value=trim(ucfirst(strtolower($name)));
                                                                                                                     
@@ -399,7 +395,7 @@ function form_to_pdf_submenu_cb() {
                                                                                                                     }else{
                                                                                                                         echo '<td>'.$name_value.'</td>';
                                                                                                                     }
-                                                                                                               // }                                                                           
+                                                                                                                                                                                         
                                                                                                                 if($field['value'] == 'email'){
                                                                                                                     
                                                                                                                     $email = esc_html(html_entity_decode($field['value']));
@@ -1473,100 +1469,55 @@ function forms_to_pdf_import_submenu_cb(){
 
                             //is_null — Indique si une variable vaut NULL
                             if (is_null($header)) {
-                                foreach ($row as $key => $value) {
-                                    $header[] = CharacterCleaner($value);
+                                foreach($row as $ligne){
+                                    $data_csv_import[]=$ligne;
                                 }
-                            } else {
-                                // array_combine — Crée un tableau à partir de deux autres tableaux
-                                $data_csv_import[(isset($row[0]) ? $row[0] : '')] = array_combine($header, $row);
-                            }
                             
-                        }   fclose($handle);
+                            }
+                           
+                        }    fclose($handle);
                     } 
-                    
-                 
-	// function csv_to_array($filename = '', $delimiter = ';')
-    // {
-    //         // file_exists — Vérifie si un fichier ou un dossier existe
-    //     if (!file_exists($filename) || !is_readable($filename))
-    //      {   return FALSE;}
-        
-    //         // variable n'a pas encore reçu de valeur.
-    //     $header = NULL;
-       
-    //     $datas = array();
-    //         // fopen — Ouvre un fichier ou une URL
-    //      if (($handle = fopen($filename, 'r')) !== FALSE) {        
-    //              $firstLine=true;
-    //          // fgetcsv — Obtient une ligne depuis un pointeur de fichier et l'analyse pour des champs CSV
-    //         while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
-    //           if($firstLine==false)
-    //           {
-    //               $datas[]=$data;
-    //           }
-    //         $firstLine=false;              
-                
-    //         }
-    //         fclose($handle);
-    //     }
-        
-    //     return $datas;
-    // }
-                // print_r($data_csv_import);
 
-                   foreach($data_csv_import as $key => $value){
                     
-                        // $dateSinceCsv = $value[0];                
-                        
-
-                       foreach ($value as $cle => $field){
-                            if($cle == "name"){
-                                $nameSinceCsv = $field; 
-                            }
-                            if($cle =="name-2"){
-                                $name2SinceCsv = $field; 
-                            }
-                            if($cle == "date"){
-                                $dateSinceCsv = $field; 
-                            }
-                            if($cle == "email"){
-                                $emailSinceCsv = trim(strtolower($field));
-                            }
-                            if($cle == "message"){
-                                $messageSinceCsv = $field;
-                            }
-                       }
-                      
+              // print_r($data_csv_import);                         
+                       
+                    for($i=3;$i<=6;$i++){
+            
+                        $data_csv[]=array('original_name' => $data_csv_import[3],'value'=>$values_csv); 
                     }
+                    $values_csv=array($data_csv_import[9], $data_csv_import[10], $data_csv_import[11],$data_csv_import[12], $data_csv_import[13]);
+                    $original_name_csv =array( ,$data_csv_import[4],$data_csv_import[5],$data_csv_import[6]);
 
-                    $values=[$nameSinceCsv, $name2SinceCsv, $dateSinceCsv, $emailSinceCsv, $messageSinceCsv];
+                    for($i=5;$i<=4;$i++){
+            
+                        $data_csv[]=array('original_name' => $data_csv_import[3],'value'=>$values_csv); 
+                    }
+                 
+                 //print_r( $data_csv);
 
-                    $datas[]=array('value' => $values);
-                   
-                    print_r($datas);
-                    wp_die();
-                  
-                //    $db_ins = array(
-                //     'post_title'  => $dateSinceCsv,
-                //     'post_status' => 'publish',
-                //     'post_type'   => 'formstopdf_db',
-                // );
+
+                  wp_die();
+                   $db_ins = array(
+                    'post_title'  => $data_csv_import[7],
+                    'post_status' => 'publish',
+                    'post_type'   => 'formstopdf_db',
+                );
     
-                // // Insert the post into the database
-                // if ($post_id = wp_insert_post($db_ins)) {
-                //     update_post_meta(
-                //             $post_id, 
-                //             'forms_to_pdf', 
-                //             array(
-                //                     'data'            => $data_csv,
-                //                     'extra'           => $extra,
-                //                     'fields_original' => $fields_data_array,
-                //                     'post'            => $_POST,
+                // Insert the post into the database
+                if ($post_id = wp_insert_post($db_ins)) {
+                    update_post_meta(
+                            $post_id, 
+                            'forms_to_pdf', 
+                            array(
+                                    'data'            => $data_csv,
+                                    'extra'           => $extra,
+                                    'fields_original' => $fields_data_array,
+                                    'post'            => $_POST,
 
-                //                 )
-                //     );
+                                )
+                    );
 
-                // }
+                }
         } 
             ?>
          </div>                  
@@ -1799,19 +1750,21 @@ function update_in_database_f2p(){
         //elimination of duplicates
         $post_id_find_unique = array_unique($post_id_find);
 
+        $rename_fields_tmp = array();
+        $visibel_hidden = array();
+
         foreach($post_id_find_unique as $id_update){
             if ($data = get_post_meta($id_update, 'forms_to_pdf', true)) {
                 $extra             = $data['extra'];
                 $fields_data_array = $data['fields_original'];
                 $post              = $data['post'];
+
+                foreach($data['data'] as $key => $value){                          
+                   array_push($rename_fields_tmp, htmlspecialchars(stripslashes(sanitize_text_field($_POST[$key]))));
+                }
+    
             }    
         }
-
-        $name_field        = isset($_POST['name'])    ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name'])))    : "";
-        $name_2_field      = isset($_POST['name_2'])  ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name_2'])))  : "";
-        $email_field       = isset($_POST['email'])   ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['email'])))   : "";
-        $message_field     = isset($_POST['message']) ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['message']))) : "";
-        $rename_fields_tmp = [$name_field, $name_2_field , $email_field, $message_field];
         $rename_fields=[];
 
         // an assignment only if there are no empty fields 
@@ -1820,7 +1773,7 @@ function update_in_database_f2p(){
                 $rename_fields[] = $value;
             }
         }
-       
+
         if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
             foreach($posts as $post){
                 if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {
@@ -1853,7 +1806,6 @@ function update_in_database_f2p(){
         }          
     }    
 }
-
 
 function forms_to_pdf_download_csv() {
 
@@ -2184,7 +2136,14 @@ function forms_to_pdf_et_contact_page_headers($headers, $contact_name, $contact_
                 'post_status' => 'publish',
                 'post_type'   => 'formstopdf_db',
             );
-
+        
+            $fields_table= array(
+                'submitted_on'    => $this_page->post_title,
+                'submitted_on_id' => $this_page->ID,
+                'submitted_by'    => $this_user,
+                'submitted_by_id' => $this_user_id
+            );
+           
             // Insert the post into the database
             if ($post_id = wp_insert_post($db_ins)) {
                 update_post_meta(
