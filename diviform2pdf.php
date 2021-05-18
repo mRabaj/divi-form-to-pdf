@@ -329,11 +329,11 @@ function form_to_pdf_submenu_cb() {
                                                         foreach ($posts as $post) { 
                                                             if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
                                                                 if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){
-                                                                        foreach($data['data'] as $key => $field){
-                                                                            echo '<th class="manage-column" ><div class="'.$key.'" data-key="'.$field['original_name'].'">'.__($field['original_name'],'form-pdf').'</div></th>';
-                                                                            }
-                                                                            echo '<th class="manage-column" >'.__('Submit date','form-name').'</th>';
-                                                                        break;
+                                                                    foreach($data['data'] as $key => $field){
+                                                                        echo '<th class="manage-column" ><div class="'.$key.'" data-key="'.$field['original_name'].'">'.__($field['original_name'],'form-pdf').'</div></th>';
+                                                                        }
+                                                                        echo '<th class="manage-column" >'.__('Submit date','form-name').'</th>';
+                                                                    break;
                                                                 }
                                                             }
                                                         }
@@ -716,6 +716,7 @@ function form_to_pdf_submenu_cb() {
                                 echo '</div>'; // fin col table
                                 echo '</div>'; // fin row table
                         echo '</form>'; // fin form post
+                        print_r($data);
                     }                    
                 } else {
                         // if there is no form submitted then a picture of a cat is displayed 
@@ -1789,7 +1790,7 @@ function update_in_database_f2p(){
             foreach($posts as $post){
                 if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                 
                     if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {
-                          //we get all the ids
+                          //we get all the "id" for each form
                         $post_id_find[] = $post->ID;
                     }                
                 }
@@ -1800,13 +1801,9 @@ function update_in_database_f2p(){
 
         foreach($post_id_find_unique as $id_update){
             if ($data = get_post_meta($id_update, 'forms_to_pdf', true)) {
-                foreach($data['data'] as $key => $value){
-                    $data_copy=$value;
-                }
-                $extra = $data['extra'];
+                $extra             = $data['extra'];
                 $fields_data_array = $data['fields_original'];
-                $post= $data['post'];
-                $fields_table = $data['fields_table'];
+                $post              = $data['post'];
             }    
         }
 
@@ -1832,7 +1829,7 @@ function update_in_database_f2p(){
                         foreach($data["data"] as $key => $value){
                             $data_update[] = [
                                 "label"         => $data["data"][$key]["label"],
-                                "original_name" => $rename_fields[$key],
+                                "original_name" => $rename_fields_tmp [$key],
                                 "value"         => $data["data"][$key]["value"],
                                 "type"          => $data["data"][$key]["type"],
                             ];
@@ -1846,12 +1843,11 @@ function update_in_database_f2p(){
             update_post_meta(
                 $id_update, 
                     'forms_to_pdf', 
-                    array(
+                    array (
                         'data'            => $data_update,
                         'extra'           => $extra,
                         'fields_original' => $fields_data_array,
-                        'post'            => $post,
-                        'fields_table'    => $fields_table
+                        'post'            => $post
                     )
             );   
         }          
