@@ -181,7 +181,7 @@ function form_to_pdf_submenu_cb() {
                                                                                 // display the names of the fields                                                                          
                                                                                 echo '<span class="input-group-text" id="basic-addon3">'.__($field['original_name'],'form-pdf').'</span>';
                                                                                 echo '<input  type="text" class="form-control" id="basic-url" name="'.$field['original_name'].'" value="'.__($field['original_name'],'form-pdf').'" aria-describedby="basic-addon3">';
-                                                                                echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="visible_'.$field['original_name'].'" id="" value="1"></span>'; 
+                                                                                echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="" id="" value="1"></span>'; 
                                                                             echo'</div>';                                                                
                                                                         echo'</li>';
                                                                     }
@@ -389,7 +389,7 @@ function form_to_pdf_submenu_cb() {
                                                                                                             echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
                                                                                                             foreach ($data['data'] as $key => $field) { 
                                     
-                                                                                                                if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
+                                                                                                               // if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
                                                                                                                 
                                                                                                                     $name = esc_html(html_entity_decode($field['value']));
                                                                                                                     $name_value=trim(ucfirst(strtolower($name)));
@@ -399,7 +399,7 @@ function form_to_pdf_submenu_cb() {
                                                                                                                     }else{
                                                                                                                         echo '<td>'.$name_value.'</td>';
                                                                                                                     }
-                                                                                                                }                                                                           
+                                                                                                               // }                                                                           
                                                                                                                 if($field['value'] == 'email'){
                                                                                                                     
                                                                                                                     $email = esc_html(html_entity_decode($field['value']));
@@ -506,7 +506,7 @@ function form_to_pdf_submenu_cb() {
                                                                                     echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
                                                                                     foreach ($data['data'] as $key => $field) { 
             
-                                                                                        if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
+                                                                                       // if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
                                                                                            
                                                                                             $name = esc_html(html_entity_decode($field['value']));
                                                                                             $name_value=trim(ucfirst(strtolower($name)));
@@ -516,7 +516,7 @@ function form_to_pdf_submenu_cb() {
                                                                                             }else{
                                                                                                 echo '<td>'.$name_value.'</td>';
                                                                                             }
-                                                                                        }                                                                           
+                                                                                       // }                                                                           
                                                                                         if($field['value'] == 'email'){
                                                                                             
                                                                                             $email = esc_html(html_entity_decode($field['value']));
@@ -568,7 +568,7 @@ function form_to_pdf_submenu_cb() {
                                                                                     echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
                                                                                     foreach ($data['data'] as $key => $field) { 
             
-                                                                                        if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
+                                                                                       // if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
                                                                                            
                                                                                             $name = esc_html(html_entity_decode($field['value']));
                                                                                             $name_value=trim(ucfirst(strtolower($name)));
@@ -578,7 +578,7 @@ function form_to_pdf_submenu_cb() {
                                                                                             }else{
                                                                                                 echo '<td>'.$name_value.'</td>';
                                                                                             }
-                                                                                        }                                                                           
+                                                                                      //  }                                                                           
                                                                                         if($field['value'] == 'email'){
                                                                                             
                                                                                             $email = esc_html(html_entity_decode($field['value']));
@@ -614,7 +614,7 @@ function form_to_pdf_submenu_cb() {
                                                                         echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
                                                                         foreach ($data['data'] as $key => $field) { 
 
-                                                                            if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
+                                                                           // if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
                                                                                
                                                                                 $name = esc_html(html_entity_decode($field['value']));
                                                                                 $name_value=trim(ucfirst(strtolower($name)));
@@ -624,7 +624,7 @@ function form_to_pdf_submenu_cb() {
                                                                                 }else{
                                                                                     echo '<td>'.$name_value.'</td>';
                                                                                 }
-                                                                            }                                                                           
+                                                                            //}                                                                           
                                                                             if($field['value'] == 'email'){
                                                                                 
                                                                                 $email = esc_html(html_entity_decode($field['value']));
@@ -654,9 +654,9 @@ function form_to_pdf_submenu_cb() {
                                                                         echo '<td class="manage-column column-cb check-column" ><input type="checkbox" name="export_id[]" value="'.$post->ID.'" /></td>';
                                                                         echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
                                                                         foreach ($data['data'] as $key => $field) { 
-
-                                                                            if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
-                                                                               
+                                                                            // print_r ($field);
+                                                                            // wp_die();
+                                                                          // if( !isset($_POST['visible_'.$field['original_name']]) || $_POST['visible_'.$field['original_name']]==1){                                                                               
                                                                                 $name = esc_html(html_entity_decode($field['value']));
                                                                                 $name_value=trim(ucfirst(strtolower($name)));
                                                                                 
@@ -665,21 +665,22 @@ function form_to_pdf_submenu_cb() {
                                                                                 }else{
                                                                                     echo '<td>'.$name_value.'</td>';
                                                                                 }
-                                                                            }                                                                           
-                                                                            if($field['value'] == 'email'){
-                                                                                
-                                                                                $email = esc_html(html_entity_decode($field['value']));
-                                                                                $email_value=trim(strtolower($email));                                                                  
-                                                                        
-                                                                                if(strlen($email_value) > $display_character){
-                                                                                    echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.substr($email_value, 0, $display_character).'...</a></td>';
-                                                                                }else{
-                                                                                    echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.$email_value.'</a></td>';
-                                                                                }
-                                                                            }                                                                                                                                               
+                                                                            
+                                                                                                                                                    
+                                                                                if($field['value'] == 'email'){
+                                                                                    
+                                                                                    $email = esc_html(html_entity_decode($field['value']));
+                                                                                    $email_value=trim(strtolower($email));                                                                  
+                                                                            
+                                                                                    if(strlen($email_value) > $display_character){
+                                                                                        echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.substr($email_value, 0, $display_character).'...</a></td>';
+                                                                                    }else{
+                                                                                        echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.$email_value.'</a></td>';
+                                                                                    }
+                                                                                } 
+                                                                            //}                                                                                                                                              
                                                                         }                                                                      
-                                                                        echo '<td data-head="post_date">'.$post->post_date.'</td>';  
-                                                                                                                                     
+                                                                        echo '<td data-head="post_date">'.$post->post_date.'</td>';                                                                                                                                       
                                                                 echo '</tr>';
                                                             }  
                                                     }
@@ -1760,10 +1761,10 @@ function update_in_database_f2p(){
             $data_update = [];
             foreach($data["data"] as $key => $value){
                 $data_update[] = [
-                    "label" => $data["data"][$key]["label"],
+                    "label"         => $data["data"][$key]["label"],
                     "original_name" => $data["data"][$key]["original_name"],
-                    "value" => $updateData[$key],
-                    "type" => $data["data"][$key]["type"],
+                    "value"         => $updateData[$key],
+                    "type"          => $data["data"][$key]["type"],
                 ];
             }
         }
@@ -1809,11 +1810,11 @@ function update_in_database_f2p(){
             }    
         }
 
-        $name_field        = isset($_POST['name'])        ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name'])))        : "";
-        $name_2_field      = isset($_POST['name_2'])      ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name_2'])))      : "";
-        $email_field       = isset($_POST['email'])       ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['email'])))       : "";
-        $message_field     = isset($_POST['message'])     ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['message'])))     : "";
-        $rename_fields_tmp = [$name_field,$name_2_field , $email_field,$message_field];
+        $name_field        = isset($_POST['name'])    ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name'])))    : "";
+        $name_2_field      = isset($_POST['name_2'])  ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name_2'])))  : "";
+        $email_field       = isset($_POST['email'])   ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['email'])))   : "";
+        $message_field     = isset($_POST['message']) ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['message']))) : "";
+        $rename_fields_tmp = [$name_field, $name_2_field , $email_field, $message_field];
         $rename_fields=[];
 
         // an assignment only if there are no empty fields 
