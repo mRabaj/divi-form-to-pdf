@@ -12,22 +12,21 @@
  */
 
 
-//constants
+//define the constants
 define('FORM_TO_PDF_VERSION', '1.0');
 define('FORM_TO_PDF_ITEM_NAME', 'Divi Form to PDF');
 define('FORM_TO_PDF_AUTHOR_NAME', 'Mohammed RABAJ');
 define('FORM_TO_PDF_FILE',__FILE__);
 define('IMG_TABLE_NAME', $wpdb->prefix.'df2p_img');
 define('TMP_TABLE_NAME', $wpdb->prefix.'df2p_templates');
-
+//
 add_action('plugins_loaded', 'form_to_pdf_init');
 
 function form_to_pdf_init() {
+    // le chemin pour la traduction du plugin 
     load_plugin_textdomain('form-pdf', false, dirname(plugin_basename(FORM_TO_PDF_FILE)) . '/languages/');
 
-
- add_filter('et_contact_page_headers', 'forms_to_pdf_et_contact_page_headers', 10, 10);
-//    add_action('add_meta_boxes', 'sb_divi_cfd_register_meta_box');
+    add_filter('et_contact_page_headers', 'forms_to_pdf_et_contact_page_headers', 10, 10);
 
     add_action('admin_enqueue_scripts', 'forms_to_pdf_enqueue', 9999);
     add_action('init', 'forms_to_pdf_pt_init');
@@ -42,16 +41,15 @@ function form_to_pdf_init() {
     add_action('admin_menu', 'form_to_pdf_submenu');
 
 }
-
+// ajout du css et script 
 function forms_to_pdf_enqueue() {
-
     wp_enqueue_style ('boostrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css');
     wp_enqueue_style ('style'         , plugins_url('/css/style.css',FORM_TO_PDF_FILE));
     wp_enqueue_script('boostrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js',"","",true);
     wp_enqueue_script('feather'       ,'https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js',"","",true);
     wp_enqueue_script('form_to_pdf_js', plugins_url('/script/script.js', FORM_TO_PDF_FILE));    
 }
-
+// les sous menus du plugin
 function form_to_pdf_submenu() {
     add_submenu_page(
         'edit.php?post_type=formstopdf_db',
@@ -89,9 +87,9 @@ if(!function_exists("removeAccents")){
 
 function CharacterCleaner($ch = '')
 { 
-    // trim — Supprime les espaces (ou d'autres caractères) en début et fin de chaîne
-    // preg_replace — Rechercher et remplacer par expression rationnelle standard
-    // mb_strtolower — Met tous les caractères en minuscules
+    // trim — Removes spaces (or other characters) at the beginning and end of a string
+    // preg_replace — Search and replace with standard regular expression
+    // mb_strtolower — Put all characters in lower case
     $ch = remove_accents($ch);        
     $ch = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $ch);
     $ch= trim($ch);
@@ -103,12 +101,12 @@ function CharacterCleaner($ch = '')
 
 function form_to_pdf_submenu_cb() {
 
-
     $url="/edit.php?post_type=formstopdf_db&page=forms_to_pdf_home";
     echo '<div class="container">';
+                //  get all posts from table wp_posts with parameters "post_type" and "posts_per_page" set to -1 for all
                 if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
                     $forms = array();
-                                        
+                     // add all the forms in a "forms" variable                    
                     foreach ($posts as $post) {
                         if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                        
                             $forms[$data['extra']['submitted_on']] = $data['extra']['submitted_on']; 
@@ -122,13 +120,14 @@ function form_to_pdf_submenu_cb() {
                                 echo' <div class="card">
                                     <div class="card-body">';
                                      echo '<h5 class="card-subtitle mb-2 text-muted">'. __('Select form name :', 'form-pdf') .'</h5>';
+                                        // display of forms 
                                         echo '<select class="form-select" id="form-name" onchange="select_f2p()" name="form-name">';
                                             echo '<option value="1">'. __('Select form name', 'form-pdf') .'</option>';
                                             $alpha_forms = array();
                                             foreach ($forms as $form) {
                                                 $alpha_forms[$form] = $form;
                                             }
-                                            // form sorting
+                                            // forms sorting
                                             ksort($alpha_forms);
                                             foreach ($alpha_forms as $form) {   
                                                 echo '<option  value="' . $form . '" ' . (isset($_REQUEST['form-name']) && $_REQUEST['form-name'] == $form ? 'selected="selected"' : '') . '>' . $form . '</option>';
@@ -136,26 +135,26 @@ function form_to_pdf_submenu_cb() {
                                         echo '</select>';
                                 echo '</div></div>';
                             echo '</div>';
-                        // echo '<input type="submit" name="" class="button-primary" value="'. __('View Form', 'form-pdf').'" />';
-                    echo '</form>'; // fin de form 
-                        
+                    echo '</form>'; // end of form 
+                    // display an alert that allows you to make changes to the table              
                     echo '<div class="col-12" id="display_setup">';
                         echo '<div  class="alert alert-light" role="alert">'.__('To change the Field title, Hide field and change the position of fields ','form-pdf').'<a href="#" class="btn btn-outline-info" onclick="displaySettingsModal()">'.__('from here.','form-pdf').'</a></div>';
                     echo '</div>';
 
-                    if (isset($_REQUEST['form-name']) && !empty($_REQUEST['form-name'])) {
-                            
+                    if (isset($_REQUEST['form-name']) && !empty($_REQUEST['form-name'])) {                            
                         $form_name= $_REQUEST['form-name'];
+                        //modification of the "url" variable
                         $url.='&form-name='.$form_name;
 
                         foreach ($posts as $post) {
                             if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {  
-                                if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {                                    
+                                if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {
+                                    // recovery of the number of IDs when placed in a formular                                        
                                     $nombreId[]=$post->ID;                                    
                                 }
                             }
                         }
-                        //calculates the number of entries 
+                        //calculates the number of entries to get the number of elements in a table 
                         $total_entries=count($nombreId);
                             ?>
                              <!-- Modal Display settings -->
@@ -174,11 +173,12 @@ function form_to_pdf_submenu_cb() {
                                                    if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {                                  
                                                         foreach ($posts as $post) {
                                                             if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {   
-                                                                if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){     
+                                                                if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){   
                                                                     
                                                                     foreach($data['data'] as $key => $field){
                                                                         echo'<li class="list-group-item">';
-                                                                            echo '<div class="input-group mb-3">';                                                                            
+                                                                            echo '<div class="input-group mb-3">';   
+                                                                                // display the names of the fields                                                                          
                                                                                 echo '<span class="input-group-text" id="basic-addon3">'.__($field['original_name'],'form-pdf').'</span>';
                                                                                 echo '<input  type="text" class="form-control" id="basic-url" name="'.$field['original_name'].'" value="'.__($field['original_name'],'form-pdf').'" aria-describedby="basic-addon3">';
                                                                                 echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="visible_'.$field['original_name'].'" id="" value="1"></span>'; 
@@ -210,14 +210,15 @@ function form_to_pdf_submenu_cb() {
                             </div>  <!-- End Modal Display settings -->
                         </form>
 
-                         <!-- start of the form -->
+                         <!-- start of the form for a modal "edit information"-->
                         <form method="post" name="" id="" action="<?php echo(admin_url(esc_url($url)))?>">                           
                             <!-- Modal Edit Information -->
                              <?php                            
                              foreach ($posts as $key => $post) { 
                                 if($data = get_post_meta($post->ID, 'forms_to_pdf', true)){ 
                                     $id_update=$post->ID;  
-                                    ?>            
+                                    ?>   
+                                    <!-- launch of the modal with a unique id -->
                                     <div class="modal fade" id="f2p_edit-information<?= $post->ID ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
@@ -230,6 +231,7 @@ function form_to_pdf_submenu_cb() {
                                                     if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {                      
                                                         foreach ($data['data'] as $key => $field) {
                                                             echo '<div class="input-group mb-3">';
+                                                                //the "name" receives a name + a number + a unique id  
                                                                 echo '<input type="hidden" class="form_control" id="basic-addon3" name="field_label_'.$key.'_'.$id_update.'" value="'.$field['label'].'">';
                                                                 echo '<span class="input-group-text" id="basic-addon3">'.$field['label'].'</span>';
                                                                 echo '<input type="text" class="form-control" id="basic-url" name="field_value_'.$key.'_'.$id_update.'" value="'.$field['value'].'" aria-describedby="basic-addon3">';                            
@@ -249,15 +251,14 @@ function form_to_pdf_submenu_cb() {
                                             </div>
                                         </div>
                                     </div>  <!-- End Modal Edit Information   -->                 
-                                   
-                             <?php }
-                             } ?>
-
+                             <?php } } ?>
+                                <!-- start of the search bar for dates -->
                                 <div class="row" >
                                     <div class="card" id="data-filter">  
                                         <div class="card-body">                             
                                                 <div class="row">
                                                     <div class="col-md-2">
+                                                        <!-- display search start date -->
                                                         <input type="date" name="startdate" id="startdate" onchange="verifyDate(1);" value="<?php echo ((isset($_REQUEST['startdate']) && !empty($_REQUEST['startdate'])) ? ($_REQUEST['startdate']) : '');?>" class="form-control">
                                                     </div>
                                                     <div class="col-md-2">
@@ -283,23 +284,21 @@ function form_to_pdf_submenu_cb() {
                                 <?php                              
                                     echo' <div class="alert alert-light" id="bulk-export">';
                                         echo '<div class="row">';
-                                            echo '<div class="col-4">';                                   
-                                            //    echo'<div class="card-body">';                                          
-                                                        echo'<div class="row">'; 
-                                                            echo '<div class="col-md-6">';
-                                                                echo '<select class="form-select" id="bulk-action-selector" name="action_selector">';
-                                                                    echo '<option value="-1">'. __('Bulk Actions', 'form-pdf') .'</option>';
-                                                                    echo '<option value="delete">' . __('Delete', 'form-pdf') . '</option>';
-                                                                echo '</select>';
-                                                            echo '</div>';  //fin col 
-                                                        echo '<input type="submit" id="todoaction" name="btnaction"  class="btn btn-outline-primary col-md-3" value="'. __('Apply', 'form-pdf').'"/>';
-                                                    echo '</div>'; //  fin row
-                                            //     echo '</div>'; //  fin card-body
-                                            // echo '</div>'; // fin card select export
+                                            echo '<div class="col-4">';                               
+                                                echo'<div class="row">'; 
+                                                    echo '<div class="col-md-6">';
+                                                            echo '<select class="form-select" id="bulk-action-selector" name="action_selector">';
+                                                                echo '<option value="-1">'. __('Bulk Actions', 'form-pdf') .'</option>';
+                                                                echo '<option value="delete">' . __('Delete', 'form-pdf') . '</option>';
+                                                            echo '</select>';
+                                                        echo '</div>';  //fin col 
+                                                    echo '<input type="submit" id="todoaction" name="btnaction"  class="btn btn-outline-primary col-md-3" value="'. __('Apply', 'form-pdf').'"/>';
+                                                echo '</div>'; //  fin row                                       
                                             echo '</div>';  //fin col    
                                             echo '<div class="col-4">';                                                                                  
                                                 echo'<div class="row">'; 
                                                     echo '<div class="col-md-6">';
+                                                    // display for multiple export 
                                                         echo '<select class="form-select" id="export_form" name="export_form">';
                                                             echo '<option value="-1">'. __('Export to...', 'form-pdf') .'</option>';
                                                             echo '<option value="pdf">' . __('Download PDF FILE', 'form-pdf') . '</option>';
@@ -309,7 +308,7 @@ function form_to_pdf_submenu_cb() {
                                                      echo '<input type="submit" name="download" id="buttonDownload"  class="btn btn-outline-primary col-md-6" value="'. __('Export the Form', 'form-pdf').'">';      
                                                 echo '</div>';                                                  
                                             echo '</div>'; //fin col  
-                                            // Number of item in table
+                                            // display the number of item in the table
                                             echo '<div class="d-flex justify-content-end"><span class="">'.(($total_entries == 1) ? "1 " . __('item','form-pdf') : $total_entries . ' ' . __('items','form-pdf')).'</span></div>';         
                                         echo '</div>'; //  fin row                                           
                                     echo '</div>';  // fin card select bulk actions  id="bulk-export"   
@@ -318,35 +317,34 @@ function form_to_pdf_submenu_cb() {
                                     echo '<div class="col-12">'; 
                                    
                                         ?>
-
+                                    <!-- display the table -->
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
                                             <td id="cb" class="manage-column column-cb check-column">
-                                                    <?php
-                                                        echo '<td id="cb" class="manage-column column-cb check-column"><input type="checkbox" id="cb-select-all-1" /></td>';
-                                                        echo '<th style="width: 32px;" class="manage-column"></th>';
-
-                                                        if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
-                                                            foreach ($posts as $post) { 
-                                                                if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
-                                                                    if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){
-                                                                            foreach($data['data'] as $key => $field){
-                                                                                echo '<th class="manage-column" ><div class="'.$key.'" data-key="'.$field['original_name'].'">'.__($field['original_name'],'form-pdf').'</div></th>';
-                                                                                }
-                                                                                echo '<th class="manage-column" >'.__('Submit date','form-name').'</th>';
-                                                                            break;
-                                                                    }
+                                                <?php
+                                                    echo '<td id="cb" class="manage-column column-cb check-column"><input type="checkbox" id="cb-select-all-1" /></td>';
+                                                    echo '<th style="width: 32px;" class="manage-column"></th>';
+                                                    if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
+                                                        foreach ($posts as $post) { 
+                                                            if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
+                                                                if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){
+                                                                        foreach($data['data'] as $key => $field){
+                                                                            echo '<th class="manage-column" ><div class="'.$key.'" data-key="'.$field['original_name'].'">'.__($field['original_name'],'form-pdf').'</div></th>';
+                                                                            }
+                                                                            echo '<th class="manage-column" >'.__('Submit date','form-name').'</th>';
+                                                                        break;
                                                                 }
                                                             }
                                                         }
-                                                                                                               
-                                                    ?>
+                                                    }
+                                                                                                            
+                                                ?>
                                             </td>
                                         </tr>
                                     </thead>
                                     <tbody id="the-list">  <?php 
-                                            //appliquer un filtre de limitation de mots à 30
+                                            //apply a word limit filter of 30
                                             $display_character = (int) apply_filters('vsz_display_character_count',30);
                                             $id_find_search =array();  
                                             $id_find_date=array();
@@ -360,24 +358,25 @@ function form_to_pdf_submenu_cb() {
                                                         foreach ($posts as $post) { 
                                                                 if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
                                                                         if ($data['extra']['submitted_on'] == $form_name){        
-                                                                            if ($postdate=$post->post_date){                                                             
+                                                                            if ($postdate=$post->post_date){ 
+                                                                                // separation of the date of the "post" in year, month and day                                                          
                                                                                 $formatDate =date('Y-m-d\TH:i', strtotime($postdate));                                    
                                                                                 $Year  = date("Y", strtotime($formatDate)); 
                                                                                 $month = date("m", strtotime($formatDate));
                                                                                 $day   = date("d", strtotime($formatDate));
-                                        
+                                                                                // retrieve the value of the search field start date 
                                                                                 $startdate=$_POST['startdate'];
-                                        
+                                                                                // separation of the date of the "startdate" in year, month and day   
                                                                                 $s_year  = date("Y", strtotime($startdate)); 
                                                                                 $s_month = date("m", strtotime($startdate));
                                                                                 $s_day   = date("d", strtotime($startdate));
-                                        
+                                                                                // retrieve the value of the search field end date 
                                                                                 $enddate=$_POST['enddate'];
-                                        
+                                                                                // separation of the date of the "enddate" in year, month and day 
                                                                                 $e_year  = date("Y", strtotime($enddate)); 
                                                                                 $e_month = date("m",strtotime($enddate));
                                                                                 $e_day   = date("d",strtotime($enddate));
-                                
+                                                                                //  start search by year, month and day  
                                                                                 if($Year >=$s_year){
                                                                                     if($month >= $s_month){
                                                                                         if($day>= $s_day){
@@ -716,8 +715,6 @@ function form_to_pdf_submenu_cb() {
                                 echo '</div>'; // fin col table
                                 echo '</div>'; // fin row table
                         echo '</form>'; // fin form post
-                                // print_r($data);
-                                // echo '<hr>';
                     }                    
                 } else {
                         // if there is no form submitted then a picture of a cat is displayed 
@@ -734,16 +731,16 @@ function forms_to_pdf_templates_submenu_cb(){
     // ajout d'un nouveau template 
     if(isset($_POST['addDataTemplate'])){
     
-        $title_pdf      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['addTitlePDF'])));   
-        $width_pdf      = $_POST['addWidthPDF'];
-        $height_pdf     = $_POST['addHeightPDF']; 
-        $size_paper     = $_POST['addSizePaper'];  
-        $font_pdf       = htmlspecialchars(stripslashes(sanitize_text_field($_POST['addFontPDF']))); 
-        $line_height    = $_POST['addLineHeight'];
-        $size_font      = $_POST['addSizeFont'];
-        $media_type     = htmlspecialchars(stripslashes(sanitize_text_field($_POST['addMediaType'])));         
-        $tmpStatus      = (int)($_POST['addStatus']); 
-        $img            = (int)($_POST['addImg']);
+        $title_pdf   = htmlspecialchars(stripslashes(sanitize_text_field($_POST['addTitlePDF'])));   
+        $width_pdf   = $_POST['addWidthPDF'];
+        $height_pdf  = $_POST['addHeightPDF']; 
+        $size_paper  = $_POST['addSizePaper'];  
+        $font_pdf    = htmlspecialchars(stripslashes(sanitize_text_field($_POST['addFontPDF']))); 
+        $line_height = $_POST['addLineHeight'];
+        $size_font   = $_POST['addSizeFont'];
+        $media_type  = htmlspecialchars(stripslashes(sanitize_text_field($_POST['addMediaType'])));         
+        $tmpStatus   = (int)($_POST['addStatus']); 
+        $img         = (int)($_POST['addImg']);
 
         // on affecte les autre status a false
         if($tmpStatus == 1){
@@ -1370,7 +1367,8 @@ function forms_to_pdf_import_submenu_cb(){
                                             
                         foreach ($posts as $post) {
                             if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {           
-                                $forms[$data['extra']['submitted_on']] = $data['extra']['submitted_on'];                          
+                                $forms[$data['extra']['submitted_on']] = $data['extra']['submitted_on'];   
+                    
                             }
                         }             
                         echo '<form method="" name="f2p_name" id="f2p_name" action="'.admin_url(esc_url($url)).'">';   
@@ -1421,6 +1419,8 @@ function forms_to_pdf_import_submenu_cb(){
                                                 }break;
                                             
                                             }
+                                            unset($data);
+                                            $data="";
                                         }                           
                                     }
                                 }
@@ -1515,21 +1515,37 @@ function forms_to_pdf_import_submenu_cb(){
                    foreach($data_csv_import as $key => $value){
                     
                         // $dateSinceCsv = $value[0];                
-                        // $nameSinceCsv = $value[4]; 
+                        
 
-                        print_r($value);
-                    
-
-                    // if ($value['field_type'] == 'email') {
-                    //     $email = trim(strtolower($values));
-                    // }
+                       foreach ($value as $cle => $field){
+                            if($cle == "name"){
+                                $nameSinceCsv = $field; 
+                            }
+                            if($cle =="name-2"){
+                                $name2SinceCsv = $field; 
+                            }
+                            if($cle == "date"){
+                                $dateSinceCsv = $field; 
+                            }
+                            if($cle == "email"){
+                                $emailSinceCsv = trim(strtolower($field));
+                            }
+                            if($cle == "message"){
+                                $messageSinceCsv = $field;
+                            }
+                       }
+                      
                     }
 
+                    $values=[$nameSinceCsv, $name2SinceCsv, $dateSinceCsv, $emailSinceCsv, $messageSinceCsv];
+
+                    $datas[]=array('value' => $values);
                    
+                    print_r($datas);
                     wp_die();
                   
                 //    $db_ins = array(
-                //     'post_title'  => date('Y-m-d H:i:s'),
+                //     'post_title'  => $dateSinceCsv,
                 //     'post_status' => 'publish',
                 //     'post_type'   => 'formstopdf_db',
                 // );
@@ -1540,7 +1556,7 @@ function forms_to_pdf_import_submenu_cb(){
                 //             $post_id, 
                 //             'forms_to_pdf', 
                 //             array(
-                //                     'data'            => $data,
+                //                     'data'            => $data_csv,
                 //                     'extra'           => $extra,
                 //                     'fields_original' => $fields_data_array,
                 //                     'post'            => $_POST,
@@ -1668,11 +1684,6 @@ function download_or_delete_img_f2p(){
         }
     }
 
-        if(isset($_POST['use_pdf']) && $_POST['use_pdf']){
-            
-
-        }
-
             //supprimer une image depuis la BDD
         if(isset($_POST['delete_img']) && $_POST['delete_img']){
          
@@ -1728,9 +1739,7 @@ function delete_in_database_f2p(){
 function update_in_database_f2p(){
     if(isset($_POST['update_data']) && !empty($_POST['update_data'])){       
  
-        if ($data = get_post_meta($_POST['update_data'], 'forms_to_pdf', true)) {  
-            
-            
+        if ($data = get_post_meta($_POST['update_data'], 'forms_to_pdf', true)) {      
 
             foreach($data['data'] as $key => $value){
                 $values_copy[] = $value['value'];
@@ -1741,16 +1750,11 @@ function update_in_database_f2p(){
             $fields_table = $data['fields_table'];
         }
 
-  
-
-        $name1   = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_0_'.$_POST['update_data']])));
-        $name2   = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_1_'.$_POST['update_data']])));
-        $email   = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_2_'.$_POST['update_data']])));
-        $message = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_3_'.$_POST['update_data']])));
+        $name1      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_0_'.$_POST['update_data']])));
+        $name2      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_1_'.$_POST['update_data']])));
+        $email      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_2_'.$_POST['update_data']])));
+        $message    = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_3_'.$_POST['update_data']])));
         $updateData = [$name1,$name2,$email,$message];
-
-      
-    
 
         if ($data = get_post_meta($_POST['update_data'], 'forms_to_pdf', true)) {   
             $data_update = [];
@@ -1777,15 +1781,12 @@ function update_in_database_f2p(){
                 )
         );       
     } 
-    
 
     if(isset($_POST['save_field_settings'])){
 
         if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
-            
             foreach($posts as $post){
-                if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                   
-                
+                if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                 
                     if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {
                           //we get all the ids
                         $post_id_find[] = $post->ID;
@@ -1808,11 +1809,11 @@ function update_in_database_f2p(){
             }    
         }
 
-        $name_field    = isset($_POST['name'])        ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name'])))        : "";
-        $name_2_field   = isset($_POST['name_2'])      ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name_2'])))      : "";
-        $email_field = isset($_POST['email'])       ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['email'])))       : "";
-        $message_field = isset($_POST['message'])     ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['message'])))     : "";
-        $rename_fields_tmp =[ $name_field,$name_2_field , $email_field,$message_field ];
+        $name_field        = isset($_POST['name'])        ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name'])))        : "";
+        $name_2_field      = isset($_POST['name_2'])      ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['name_2'])))      : "";
+        $email_field       = isset($_POST['email'])       ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['email'])))       : "";
+        $message_field     = isset($_POST['message'])     ? htmlspecialchars(stripslashes(sanitize_text_field($_POST['message'])))     : "";
+        $rename_fields_tmp = [$name_field,$name_2_field , $email_field,$message_field];
         $rename_fields=[];
 
         // an assignment only if there are no empty fields 
@@ -1829,10 +1830,10 @@ function update_in_database_f2p(){
                         $data_update = [];
                         foreach($data["data"] as $key => $value){
                             $data_update[] = [
-                                "label" => $data["data"][$key]["label"],
+                                "label"         => $data["data"][$key]["label"],
                                 "original_name" => $rename_fields[$key],
-                                "value" => $data["data"][$key]["value"],
-                                "type" => $data["data"][$key]["type"],
+                                "value"         => $data["data"][$key]["value"],
+                                "type"          => $data["data"][$key]["type"],
                             ];
                         }
                     }
@@ -2023,7 +2024,7 @@ function forms_to_pdf_download_pdf() {
                                             foreach ($posts as $k => $post ) {
                                                 if($ids==$post->ID){                                          
                                                         $postDate=$post->post_date;
-                                                        $FormatFrDate=date('d-m-Y H:i:s', strtotime($postDate));                                            
+                                                        $FormatFrDate=date('d-m-Y H:i:s', strtotime($postDate));                                           
                                                      
                                                         $content .= '<tr><td>' . __('Date', 'form-pdf') . '</td><td>' .  $FormatFrDate. '</td></tr><tr><td>' . __('Submitted On', 'form-pdf') . '</td><td>' . $data['extra']['submitted_on'] . '</td></tr>';
                                                             foreach ($data['data'] as $field) {
@@ -2181,13 +2182,6 @@ function forms_to_pdf_et_contact_page_headers($headers, $contact_name, $contact_
                 'submitted_by_id' => $this_user_id
             );
 
-            $THEAD_TFOOT_FIELD = array(
-                'et_pb_contact_name_0'      => 'Name',
-                'et_pb_contact_email_0'     => 'Email',
-                'et_pb_contact_message_0'   => 'Message',
-                'post_date'                 => 'Submit date'
-            );  
-
             $db_ins = array(
                 'post_title'  => date('Y-m-d H:i:s'),
                 'post_status' => 'publish',
@@ -2204,7 +2198,6 @@ function forms_to_pdf_et_contact_page_headers($headers, $contact_name, $contact_
                                 'extra'           => $extra,
                                 'fields_original' => $fields_data_array,
                                 'post'            => $_POST,
-                                'fields_table'    =>  $THEAD_TFOOT_FIELD
                                // 'server'          => $_SERVER
                             )
                 );

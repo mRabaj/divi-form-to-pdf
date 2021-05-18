@@ -84,7 +84,7 @@ jQuery(document).ready(function($) {
 
 
 });
-
+// function which allows to direct to a new url 
 function select_f2p(){
    var url = jQuery('#f2p_name').attr('action');
 	var form_name =jQuery('#form-name').val();
@@ -193,13 +193,8 @@ function checkfile(sender) {
 	else return true;
 }
 
-// function changeDachicons(span){
-// 	var status =jQuery('.dashicons dashicons-visibility');
-// 	console.log(status)
-// }
-
+//  if the end date is selected then the start of date search receives the maximum end date 
 function verifyDate(type){
-	// put the maximum at the start date if the end date is at least
 	if(type==1){
 		document.getElementById("enddate").setAttribute("min", jQuery('#startdate').val());
 	}
