@@ -653,15 +653,14 @@ function form_to_pdf_submenu_cb() {
                                                                             // print_r ($field);
                                                                             // wp_die();
                                                                           // if( !isset($_POST['visible_'.$field['original_name']]) || $_POST['visible_'.$field['original_name']]==1){                                                                               
-                                                                                $name = esc_html(html_entity_decode($field['value']));
+                                                                                $name = esc_html($field['value']);
                                                                                 $name_value=trim(ucfirst(strtolower($name)));
                                                                                 
                                                                                 if(strlen($name_value) > $display_character){
                                                                                     echo '<td>'.substr($name_value, 0, $display_character).'...</td>';
                                                                                 }else{
                                                                                     echo '<td>'.$name_value.'</td>';
-                                                                                }
-                                                                            
+                                                                                }                                                                           
                                                                                                                                                     
                                                                                 if($field['value'] == 'email'){
                                                                                     
@@ -712,7 +711,12 @@ function form_to_pdf_submenu_cb() {
                                 echo '</div>'; // fin col table
                                 echo '</div>'; // fin row table
                         echo '</form>'; // fin form post
-                        print_r($data);
+
+                        foreach ($posts as $post) { 
+                            if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
+                                print_r($post);
+                            }
+                        }
                     }                    
                 } else {
                         // if there is no form submitted then a picture of a cat is displayed 
@@ -1479,26 +1483,40 @@ function forms_to_pdf_import_submenu_cb(){
                     } 
 
                     
-              // print_r($data_csv_import);                         
-                       
-                    for($i=3;$i<=6;$i++){
-            
-                        $data_csv[]=array('original_name' => $data_csv_import[3],'value'=>$values_csv); 
-                    }
-                    $values_csv=array($data_csv_import[9], $data_csv_import[10], $data_csv_import[11],$data_csv_import[12], $data_csv_import[13]);
-                    $original_name_csv =array( ,$data_csv_import[4],$data_csv_import[5],$data_csv_import[6]);
+            //   print_r($data_csv_import);  
+                $data_csv=array();
 
-                    for($i=5;$i<=4;$i++){
-            
-                        $data_csv[]=array('original_name' => $data_csv_import[3],'value'=>$values_csv); 
-                    }
-                 
-                 //print_r( $data_csv);
-
-
-                  wp_die();
+            $extra=array(
+                "submitted_on" => $data_csv_import[8],
+                "submitted_by" => $data_csv_import[9]
+            );
+        
+            for($i=10;$i<=13;$i++){
+                $data_test[]=  $data_csv_import[$i];
+            }
+         
+            if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
+                foreach($posts as $post){
+                    if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {
+                        if ($data['extra']['submitted_on'] == $data_csv_import[8] ) { 
+                            
+                            foreach($data["data"] as $key => $value){
+                                foreach($data_test as $key2 => $field){ 
+                                $data_csv[] = [
+                                    "label"          => $data["data"][$key2]["label"],                                   
+                                     "original_name" => $data["data"][$key2]["original_name"], 
+                                     "value"         => $field, 
+                                     "type"           => $data["data"][$key2]["type"]                 
+                                ];
+                            }break;               
+                        }break;
+                        }
+                    } 
+                }      
+            }
                    $db_ins = array(
-                    'post_title'  => $data_csv_import[7],
+                    'post_date'   => $data_csv_import[7],
+                    'post_title'  => date('Y-m-d H:i:s'),
                     'post_status' => 'publish',
                     'post_type'   => 'formstopdf_db',
                 );
@@ -1510,14 +1528,27 @@ function forms_to_pdf_import_submenu_cb(){
                             'forms_to_pdf', 
                             array(
                                     'data'            => $data_csv,
-                                    'extra'           => $extra,
-                                    'fields_original' => $fields_data_array,
+                                    'extra'           => $extra,                           
                                     'post'            => $_POST,
-
                                 )
                     );
 
                 }
+                ?>
+                <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </symbol>
+                </svg>
+
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                 l'importation vient d'être terminé avec succes.
+                </div>
+                </div>
+            <?php
+        
         } 
             ?>
          </div>                  
@@ -1762,7 +1793,6 @@ function update_in_database_f2p(){
                 foreach($data['data'] as $key => $value){                          
                    array_push($rename_fields_tmp, htmlspecialchars(stripslashes(sanitize_text_field($_POST[$key]))));
                 }
-    
             }    
         }
         $rename_fields=[];
