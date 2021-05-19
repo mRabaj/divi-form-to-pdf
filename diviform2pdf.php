@@ -241,7 +241,7 @@ function form_to_pdf_submenu_cb() {
                         }
                     }                    
                     echo '<h5>' . __('View Form Information', 'form-pdf') . ':</h5>';
-                    // 
+                    // admin_url() : Retrieves the URL to the admin area for the current site.
                     echo '<form method="" name="f2p_name" id="f2p_name" action="'.admin_url(esc_url($url)).'">';   
                         echo '<div class="row">';                 
                             echo '<div class="col-12">';
@@ -255,7 +255,7 @@ function form_to_pdf_submenu_cb() {
                                             foreach ($forms as $form) {
                                                 $alpha_forms[$form] = $form;
                                             }
-                                            // forms sorting
+                                            // forms sorting. ksort() : Sort an array by key
                                             ksort($alpha_forms);
                                             foreach ($alpha_forms as $form) {   
                                                 echo '<option  value="' . $form . '" ' . (isset($_REQUEST['form-name']) && $_REQUEST['form-name'] == $form ? 'selected="selected"' : '') . '>' . $form . '</option>';
@@ -264,20 +264,21 @@ function form_to_pdf_submenu_cb() {
                                 echo '</div></div>';
                             echo '</div>';
                     echo '</form>'; // end of form 
-                    // display an alert that allows you to make changes to the table              
+                    // display an modal that allows you to make changes to the table              
                     echo '<div class="col-12" id="display_setup">';
-                        echo '<div  class="alert alert-light" role="alert">'.__('To change the Field title, Hide field ','form-pdf').'<a href="#" class="btn btn-outline-info" onclick="displaySettingsModal()">'.__('from here.','form-pdf').'</a></div>';
+                        echo '<div  class="alert alert-light" role="alert">'.__('To change the Field title','form-pdf').'<a href="#" class="btn btn-outline-info" onclick="displaySettingsModal()">'.__('from here.','form-pdf').'</a></div>';
                     echo '</div>';
 
                     if (isset($_REQUEST['form-name']) && !empty($_REQUEST['form-name'])) {                            
                         $form_name= $_REQUEST['form-name'];
                         //modification of the "url" variable
                         $url.='&form-name='.$form_name;
-
+                        //browse the "posts" array
                         foreach ($posts as $post) {
-                            if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {  
+                            if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {
+                                //  we place ourselves in the right form  
                                 if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {
-                                    // recovery of the number of IDs when placed in a formular                                        
+                                    // recovery of the number of ID when placed in a formular                                        
                                     $nombreId[]=$post->ID;                                    
                                 }
                             }
@@ -285,8 +286,9 @@ function form_to_pdf_submenu_cb() {
                         //calculates the number of entries to get the number of elements in a table 
                         $total_entries=count($nombreId);
                             ?>
-                             <!-- Modal Display settings -->
+                          
                         <form method="post">
+                               <!-- start Modal settings -->
                             <div class="modal fade" id="f2p_display-settings" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -296,7 +298,7 @@ function form_to_pdf_submenu_cb() {
                                         </div>
                                         <div class="modal-body">
                                             <?php                                            
-                                                        
+                                              // beginning of unnumbered list       
                                             echo'<ul class="list-group">';
                                                    if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {                                  
                                                         foreach ($posts as $post) {
