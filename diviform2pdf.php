@@ -34,9 +34,11 @@ function form_to_pdf_init() {
     add_filter('et_contact_page_headers', 'forms_to_pdf_et_contact_page_headers', 10, 10);
 
     add_action('admin_enqueue_scripts', 'forms_to_pdf_enqueue', 9999);
+
     add_action('init', 'forms_to_pdf_pt_init');
     
     add_action('admin_head', 'forms_to_pdf_admin_head');
+
     add_action('admin_init', 'forms_to_pdf_download_csv', 1, 1);
     add_action('admin_init', 'forms_to_pdf_download_pdf', 1, 1);
 
@@ -102,7 +104,6 @@ function CharacterCleaner($ch = '')
     return $ch;
 }
 
-
 function update_in_database_f2p(){
     if(isset($_POST['update_data']) && !empty($_POST['update_data'])){       
  
@@ -149,7 +150,7 @@ function update_in_database_f2p(){
                 )
         );       
     } 
-
+    //start to change the headers and footer of the table
     if(isset($_POST['save_field_settings'])){
 
         if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
@@ -162,7 +163,7 @@ function update_in_database_f2p(){
                 }
             }
         }
-        //elimination of duplicates
+        //elimination of duplicates among the ids found 
         $post_id_find_unique = array_unique($post_id_find);
 
         $rename_fields_tmp = array();
@@ -173,23 +174,27 @@ function update_in_database_f2p(){
                 $extra             = $data['extra'];
                 $fields_data_array = $data['fields_original'];
                 $post              = $data['post'];
-                // on récupère tout les "post" avec comme paramtre les clés en numérateur
+                // we recover all the "post" of the inputs possibly to be modified by making it pass keys in numerator form as parameter 
                for($i=0; $i<=count($data['data']);$i++) {                       
                    array_push($rename_fields_tmp, htmlspecialchars(stripslashes(sanitize_text_field($_POST[$i]))));
                 }
             }    
         }
-        $rename_fields=[];
-
-        $rename_fields = array_unique($rename_fields);
+   
+        //elimination of field duplicates fields to be changed 
         $rename_fields_tmp = array_unique($rename_fields_tmp);
-
+        // we get all the posts as an array from the database(wp_posts), with as parameter the post_type and all the posts because the posts_per_page is "-1". 
         if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
-            foreach($posts as $post){                
+            //browse the table posts
+            foreach($posts as $post){  
+                    // obtaining data, with the id and the name of the post_type as parameters            
                     if ($data = get_post_meta($post_id_find_unique[0], 'forms_to_pdf', true)) {
+                        // condition if you are in the right form selected beforehand 
                         if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {  
                             $data_update = [];
+                            // browse the first sub-array data of the multi-dimensional array $data
                             foreach($data["data"] as $key => $value){
+                                // browse the table of fields retrieved by the "post" method
                                 foreach($rename_fields_tmp as $key2 => $field){
                                     $data_update[] = [
                                         "label"          => $data["data"][$key2]["label"],
@@ -206,36 +211,37 @@ function update_in_database_f2p(){
                 }
             }      
         }
-      
-            update_post_meta(
-                $post_id_find_unique[0],
-                    'forms_to_pdf', 
-                    array (
-                        'data'            => $data_update,
-                        'extra'           => $extra,
-                        'fields_original' => $fields_data_array,
-                        'post'            => $post
-                    )
-            );   
+      //update of information in the database 
+        update_post_meta(
+            $post_id_find_unique[0],
+                'forms_to_pdf', 
+                array (
+                    'data'            => $data_update,
+                    'extra'           => $extra,
+                    'fields_original' => $fields_data_array,
+                    'post'            => $post
+                )
+        );   
                
     }    
 }
 
-function form_to_pdf_submenu_cb() {
-
+function form_to_pdf_submenu_cb() { 
     $url="/edit.php?post_type=formstopdf_db&page=forms_to_pdf_home";
     echo '<div class="container">';
                 //  get all posts from table wp_posts with parameters "post_type" and "posts_per_page" set to -1 for all
                 if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
                     $forms = array();
-                     // add all the forms in a "forms" variable                    
+                      // browse all posts                
                     foreach ($posts as $post) {
-                        if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                        
+                        // get all data for all posts
+                        if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) { 
+                             // add all the forms in a array "forms"                         
                             $forms[$data['extra']['submitted_on']] = $data['extra']['submitted_on']; 
                         }
                     }                    
                     echo '<h5>' . __('View Form Information', 'form-pdf') . ':</h5>';
-                 
+                    // 
                     echo '<form method="" name="f2p_name" id="f2p_name" action="'.admin_url(esc_url($url)).'">';   
                         echo '<div class="row">';                 
                             echo '<div class="col-12">';
