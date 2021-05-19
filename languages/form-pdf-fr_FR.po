@@ -214,3 +214,7 @@ msgstr "Votre-mail"
 #: diviform2pdf.php:264
 msgid "Your-message"
 msgstr "Votre-message"
+
+#: diviform2pdf.php:264
+msgid "Your-message"
+msgstr "Votre-message"

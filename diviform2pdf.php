@@ -1,5 +1,10 @@
 <?php
 /**
+ * @package Divi form2pdf
+ * @version 1.0
+ */
+
+/**
  * Plugin Name: Divi Form2PDF
  * Plugin URI: https://www.undefined.fr/
  * Description: Retrieve the data in order to download it as a PDF   
@@ -41,7 +46,7 @@ function form_to_pdf_init() {
     add_action('admin_menu', 'form_to_pdf_submenu');
 
 }
-// ajout du css et script 
+// add css and script 
 function forms_to_pdf_enqueue() {
     wp_enqueue_style ('boostrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css');
     wp_enqueue_style ('style'         , plugins_url('/css/style.css',FORM_TO_PDF_FILE));
@@ -59,7 +64,6 @@ function form_to_pdf_submenu() {
         'forms_to_pdf_home',
         'form_to_pdf_submenu_cb'
     );
-
     add_submenu_page(
         'edit.php?post_type=formstopdf_db',
         __('Templates', 'form-pdf'),
@@ -98,6 +102,124 @@ function CharacterCleaner($ch = '')
     return $ch;
 }
 
+
+function update_in_database_f2p(){
+    if(isset($_POST['update_data']) && !empty($_POST['update_data'])){       
+ 
+        if ($data = get_post_meta($_POST['update_data'], 'forms_to_pdf', true)) {      
+
+            foreach($data['data'] as $key => $value){
+                $values_copy[] = $value['value'];
+            }             
+            $extra = $data['extra'];
+            $fields_data_array = $data['fields_original'];
+            $post= $data['post'];
+            $fields_table = $data['fields_table'];
+        }
+
+        $name1      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_0_'.$_POST['update_data']])));
+        $name2      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_1_'.$_POST['update_data']])));
+        $email      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_2_'.$_POST['update_data']])));
+        $message    = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_3_'.$_POST['update_data']])));
+        $updateData = [$name1,$name2,$email,$message];
+
+        if ($data = get_post_meta($_POST['update_data'], 'forms_to_pdf', true)) {   
+            $data_update = [];
+            foreach($data["data"] as $key => $value){
+                $data_update[] = [
+                    "label"         => $data["data"][$key]["label"],
+                    "original_name" => $data["data"][$key]["original_name"],
+                    "original_name2" => $data["data"][$key]["original_name2"],
+                    "value"         => $updateData[$key],
+                    "type"          => $data["data"][$key]["type"],
+                ];
+            }
+        }
+    
+        // Insert the post into the database
+        update_post_meta(
+            $_POST['update_data'], 
+                'forms_to_pdf', 
+                array(
+                    'data'            => $data_update,
+                    'extra'           => $extra,
+                    'fields_original' => $fields_data_array,
+                    'post'            => $post,
+                    'fields_table'    => $fields_table
+                )
+        );       
+    } 
+
+    if(isset($_POST['save_field_settings'])){
+
+        if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
+            foreach($posts as $post){
+                if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                 
+                    if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {
+                          //we get all the "id" for each form
+                        $post_id_find[] = $post->ID;
+                    }                
+                }
+            }
+        }
+        //elimination of duplicates
+        $post_id_find_unique = array_unique($post_id_find);
+
+        $rename_fields_tmp = array();
+        $visibel_hidden = array();
+
+        foreach($post_id_find_unique as $id_update){
+            if ($data = get_post_meta($id_update, 'forms_to_pdf', true)) {
+                $extra             = $data['extra'];
+                $fields_data_array = $data['fields_original'];
+                $post              = $data['post'];
+                // on récupère tout les "post" avec comme paramtre les clés en numérateur
+               for($i=0; $i<=count($data['data']);$i++) {                       
+                   array_push($rename_fields_tmp, htmlspecialchars(stripslashes(sanitize_text_field($_POST[$i]))));
+                }
+            }    
+        }
+        $rename_fields=[];
+
+        $rename_fields = array_unique($rename_fields);
+        $rename_fields_tmp = array_unique($rename_fields_tmp);
+
+        if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
+            foreach($posts as $post){                
+                    if ($data = get_post_meta($post_id_find_unique[0], 'forms_to_pdf', true)) {
+                        if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {  
+                            $data_update = [];
+                            foreach($data["data"] as $key => $value){
+                                foreach($rename_fields_tmp as $key2 => $field){
+                                    $data_update[] = [
+                                        "label"          => $data["data"][$key2]["label"],
+                                        "original_name"  => $field,
+                                        "original_name2" => $data["data"][$key2]["original_name2"],
+                                        "value"          => $data["data"][$key2]["value"],
+                                        "type"           => $data["data"][$key2]["type"],
+                                    ];
+                                }break;
+                            
+                            }break;
+                    }
+                    
+                }
+            }      
+        }
+      
+            update_post_meta(
+                $post_id_find_unique[0],
+                    'forms_to_pdf', 
+                    array (
+                        'data'            => $data_update,
+                        'extra'           => $extra,
+                        'fields_original' => $fields_data_array,
+                        'post'            => $post
+                    )
+            );   
+               
+    }    
+}
 
 function form_to_pdf_submenu_cb() {
 
@@ -138,7 +260,7 @@ function form_to_pdf_submenu_cb() {
                     echo '</form>'; // end of form 
                     // display an alert that allows you to make changes to the table              
                     echo '<div class="col-12" id="display_setup">';
-                        echo '<div  class="alert alert-light" role="alert">'.__('To change the Field title, Hide field and change the position of fields ','form-pdf').'<a href="#" class="btn btn-outline-info" onclick="displaySettingsModal()">'.__('from here.','form-pdf').'</a></div>';
+                        echo '<div  class="alert alert-light" role="alert">'.__('To change the Field title, Hide field ','form-pdf').'<a href="#" class="btn btn-outline-info" onclick="displaySettingsModal()">'.__('from here.','form-pdf').'</a></div>';
                     echo '</div>';
 
                     if (isset($_REQUEST['form-name']) && !empty($_REQUEST['form-name'])) {                            
@@ -173,17 +295,29 @@ function form_to_pdf_submenu_cb() {
                                                    if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {                                  
                                                         foreach ($posts as $post) {
                                                             if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {   
-                                                                if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){   
-                                                                    
+                                                                if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){  
+                                                                   
                                                                     foreach($data['data'] as $key => $field){
-                                                                        echo'<li class="list-group-item">';
+
+                                                                        foreach($field as $key2 => $value){
+                                                                            if($value ==='')
+                                                                            {
+                                                                                unset($field[$key2]);
+                                                                            }
+                                                                        }
+                                                                        // $field=array_filter($field);
+                                                                        // $field = array_diff($field, array("",0,null));
+                                                                        // if($field!==""){
+                                                                            echo'<li class="list-group-item">';
                                                                             echo '<div class="input-group mb-3">';   
                                                                                 // display the names of the fields                                                                          
-                                                                                echo '<span class="input-group-text" id="basic-addon3">'.__($field['original_name'],'form-pdf').'</span>';
-                                                                                echo '<input  type="text" class="form-control" id="basic-url" name="'.$key.'" value="'.__($field['original_name'],'form-pdf').'" aria-describedby="basic-addon3">';
+                                                                                echo '<span class="input-group-text" id="basic-addon3">'.$field['original_name2'].'</span>';
+                                                                                echo '<input  type="text" class="form-control" id="basic-url" name="'.$key.'" value="'.$field['original_name'].'" aria-describedby="basic-addon3">';
                                                                                 echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="visible_'.$key.'" id="" value="1"></span>'; 
                                                                             echo'</div>';                                                                
-                                                                        echo'</li>';
+                                                                            echo'</li>';
+                                                                       // }
+                                                                        
                                                                     }
                                                                     echo'<li class="list-group-item">';
                                                                         echo '<div class="input-group mb-3">';  
@@ -714,7 +848,7 @@ function form_to_pdf_submenu_cb() {
 
                         foreach ($posts as $post) { 
                             if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
-                                print_r($post);
+                                print_r($data);
                             }
                         }
                     }                    
@@ -1499,14 +1633,13 @@ function forms_to_pdf_import_submenu_cb(){
                 foreach($posts as $post){
                     if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {
                         if ($data['extra']['submitted_on'] == $data_csv_import[8] ) { 
-                            
                             foreach($data["data"] as $key => $value){
                                 foreach($data_test as $key2 => $field){ 
                                 $data_csv[] = [
-                                    "label"          => $data["data"][$key2]["label"],                                   
-                                     "original_name" => $data["data"][$key2]["original_name"], 
-                                     "value"         => $field, 
-                                     "type"           => $data["data"][$key2]["type"]                 
+                                    "label"         => $data["data"][$key2]["label"],                                   
+                                    "original_name" => $data["data"][$key2]["original_name"], 
+                                    "value"         => $field, 
+                                    "type"          => $data["data"][$key2]["type"]                 
                                 ];
                             }break;               
                         }break;
@@ -1720,123 +1853,6 @@ function delete_in_database_f2p(){
 }
 
 
-function update_in_database_f2p(){
-    if(isset($_POST['update_data']) && !empty($_POST['update_data'])){       
- 
-        if ($data = get_post_meta($_POST['update_data'], 'forms_to_pdf', true)) {      
-
-            foreach($data['data'] as $key => $value){
-                $values_copy[] = $value['value'];
-            }             
-            $extra = $data['extra'];
-            $fields_data_array = $data['fields_original'];
-            $post= $data['post'];
-            $fields_table = $data['fields_table'];
-        }
-
-        $name1      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_0_'.$_POST['update_data']])));
-        $name2      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_1_'.$_POST['update_data']])));
-        $email      = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_2_'.$_POST['update_data']])));
-        $message    = htmlspecialchars(stripslashes(sanitize_text_field($_POST['field_value_3_'.$_POST['update_data']])));
-        $updateData = [$name1,$name2,$email,$message];
-
-        if ($data = get_post_meta($_POST['update_data'], 'forms_to_pdf', true)) {   
-            $data_update = [];
-            foreach($data["data"] as $key => $value){
-                $data_update[] = [
-                    "label"         => $data["data"][$key]["label"],
-                    "original_name" => $data["data"][$key]["original_name"],
-                    "value"         => $updateData[$key],
-                    "type"          => $data["data"][$key]["type"],
-                ];
-            }
-        }
-    
-        // Insert the post into the database
-        update_post_meta(
-            $_POST['update_data'], 
-                'forms_to_pdf', 
-                array(
-                    'data'            => $data_update,
-                    'extra'           => $extra,
-                    'fields_original' => $fields_data_array,
-                    'post'            => $post,
-                    'fields_table'    => $fields_table
-                )
-        );       
-    } 
-
-    if(isset($_POST['save_field_settings'])){
-
-        if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
-            foreach($posts as $post){
-                if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                 
-                    if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {
-                          //we get all the "id" for each form
-                        $post_id_find[] = $post->ID;
-                    }                
-                }
-            }
-        }
-        //elimination of duplicates
-        $post_id_find_unique = array_unique($post_id_find);
-
-        $rename_fields_tmp = array();
-        $visibel_hidden = array();
-
-        foreach($post_id_find_unique as $id_update){
-            if ($data = get_post_meta($id_update, 'forms_to_pdf', true)) {
-                $extra             = $data['extra'];
-                $fields_data_array = $data['fields_original'];
-                $post              = $data['post'];
-
-                foreach($data['data'] as $key => $value){                          
-                   array_push($rename_fields_tmp, htmlspecialchars(stripslashes(sanitize_text_field($_POST[$key]))));
-                }
-            }    
-        }
-        $rename_fields=[];
-
-        // an assignment only if there are no empty fields 
-        foreach($rename_fields_tmp as $value){
-            if($value!=""){
-                $rename_fields[] = $value;
-            }
-        }
-
-        if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
-            foreach($posts as $post){
-                if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {
-                    if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {  
-                        $data_update = [];
-                        foreach($data["data"] as $key => $value){
-                            $data_update[] = [
-                                "label"         => $data["data"][$key]["label"],
-                                "original_name" => $rename_fields_tmp [$key],
-                                "value"         => $data["data"][$key]["value"],
-                                "type"          => $data["data"][$key]["type"],
-                            ];
-                        }
-                    }
-                } 
-            }      
-        }
-
-        foreach($post_id_find_unique as $id_update){
-            update_post_meta(
-                $id_update, 
-                    'forms_to_pdf', 
-                    array (
-                        'data'            => $data_update,
-                        'extra'           => $extra,
-                        'fields_original' => $fields_data_array,
-                        'post'            => $post
-                    )
-            );   
-        }          
-    }    
-}
-
 function forms_to_pdf_download_csv() {
 
     if(isset($_REQUEST['export_form']) && $_REQUEST['export_form']=="csv" && isset($_POST['download'])){
@@ -1968,7 +1984,7 @@ function forms_to_pdf_download_pdf() {
                             <html>
                             <head>
                                 <meta http-equiv="Content-Type" content="text/html;" />
-                               <style>
+                             <style>
                                table, th, td {
                                 border: 1px solid #ddd;
                                 border-collapse: collapse;
@@ -1976,10 +1992,10 @@ function forms_to_pdf_download_pdf() {
                                 width:100%;
                                 white-space: normal;
                                 word-wrap: break-word; 
-                            }
-                            table tr th {width:50%;}
-                            td {padding:5px;}
-                            tr {border-color:#0d6efd;}
+                                }
+                                table tr th {width:50%;}
+                                td {padding:5px;}
+                                tr {border-color:#0d6efd;}
                                </style>
                             </head>
                             <body>';
@@ -2108,7 +2124,6 @@ function forms_to_pdf_pt_init() {
     register_post_type('formstopdf_db', $args);
 }
 
-
 function forms_to_pdf_et_contact_page_headers($headers, $contact_name, $contact_email) {
     global $current_user;
 
@@ -2138,7 +2153,7 @@ function forms_to_pdf_et_contact_page_headers($headers, $contact_name, $contact_
                     $type   = "textarea"; 
                 }
             
-                $data[] = array('label' => $label, 'original_name' =>  $original_name,'value' => $values, 'type' => $type);
+                $data[] = array('label' => $label, 'original_name' =>  $original_name,'original_name2' =>  $original_name,'value','value' => $values, 'type' => $type);
 
                 if ($value['field_type'] == 'email') {
                     $email = trim(strtolower($values));
