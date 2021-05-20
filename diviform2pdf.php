@@ -968,7 +968,7 @@ function forms_to_pdf_templates_submenu_cb(){
     // update of a template
     if(isset($_POST['updateDataTemplate']) && !empty($_POST['updateDataTemplate'])){
 
-        //on recupère l'id et le nom du template dans tableau
+        //we get the ID and the name of the template in table
         $choice = explode('_',$_POST['updateDataTemplate']);
         //recovery only of the entire
         $id_template   =(int) $choice[0];
@@ -982,11 +982,11 @@ function forms_to_pdf_templates_submenu_cb(){
         $size_font     = $_POST['editSizeFont_'.$id_template];
         $media_type    = htmlspecialchars(stripslashes(sanitize_text_field($_POST['editMediaType_'.$id_template]))); 
         $tmpStatus     = $_POST['editStatus_'.$id_template]; 
-        // on affecte le(s) statut(s) de(s) modèle(s) par false 
+        // we assign the status(es) of the model(s) by false 
         if($tmpStatus == 1){
             $wpdb->query($wpdb->prepare("UPDATE `".TMP_TABLE_NAME."` SET `tmp_status`=%d where 1",0));
         }
-
+        //case by case depending on the choice of the paper size
         switch($size_paper){
             case "a4_portrait" :
                 $paper_orientation = "portrait";
@@ -1032,11 +1032,11 @@ function forms_to_pdf_templates_submenu_cb(){
                 $paper_orientation = "";
         }   
     
-            //màj dans la bdd
+            //update in the database
             $updateTmp = $wpdb->query($wpdb->prepare("UPDATE `".TMP_TABLE_NAME."` SET `title_pdf`=%s , `width_pdf`=%d , `height_pdf`=%d , `size_paper`=%s , `tmp_font`=%s , `size_font`=%d , `line_height`=%d , `paper_orientation`=%s , `media_type`=%s, `tmp_status`=%d where `id_template`=%d ", $title_pdf, $width_pdf, $height_pdf, $size_paper, $font_pdf, $size_font, $line_height, $paper_orientation, $media_type, $tmpStatus,$id_template));
         
 
-            // si màj a bien été effectuer dans la bdd, dans ce cas confirmation
+            //if the update has been done in the database, in this case a confirmation message
             if($updateTmp !==false){
                 ?>
                  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -1055,15 +1055,15 @@ function forms_to_pdf_templates_submenu_cb(){
             }
     }
 
-    // suppression d'un template dans la BDD
+    // delete a template from the database
     if(isset($_POST['moveToTrashTemplate']) && !empty($_POST['moveToTrashTemplate'])){
 
         $idTrash = $_POST['moveToTrashTemplate'];
 
-        // suppression d'un template par son ID
+        // delete a template by its ID
         $tmpTrash = $wpdb->query("DELETE FROM ".TMP_TABLE_NAME." WHERE id_template IN($idTrash)");
 
-            // avertissement d'un ajout de nouveau template
+            //warning of a new template addition in the form of an alert
           if($tmpTrash!==false){
                 // $alertDeleteSuccess = true;
                     ?>
@@ -1081,7 +1081,7 @@ function forms_to_pdf_templates_submenu_cb(){
             }
     }
 
-    // on recupère les données depuis la BDD
+    // we retrieve the data from the database
         // les templates
         $sql_tmp = $wpdb->prepare("SELECT  `id_template`,`title_pdf`, `width_pdf`, `height_pdf`, `size_paper`, `tmp_font`, `size_font`, `line_height`, `paper_orientation`, `media_type`,`tmp_status`, `img_id`  FROM `".TMP_TABLE_NAME."` ORDER BY `title_pdf` ASC");
         $result_tmp = $wpdb->get_results($sql_tmp);
@@ -1091,7 +1091,7 @@ function forms_to_pdf_templates_submenu_cb(){
         $result_img = $wpdb->get_results($sql_img);
 
 
-        //Condition d'affichage en fonction du resultat dans la bdd.
+        //Display condition according to the result from the database.
         if(!empty($result_tmp)){
             $find_template=true;
         }else{
@@ -1105,9 +1105,10 @@ function forms_to_pdf_templates_submenu_cb(){
         }
     
 ?>         
-    <!-- Modifier un template -->
+    <!-- Modifying a template  -->
     <form method="post" >
             <?php foreach($result_tmp as $key => $tmp){?>
+                <!--launch the template according to its name and ID in the database-->
                 <div class="modal fade" id="editTemplateModal<?= $tmp->id_template ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -1179,15 +1180,17 @@ function forms_to_pdf_templates_submenu_cb(){
                                     <li class="list-group-item">
                                         <div class="input-group mb-3">
                                                 <span class="input-group-text"><?php echo __('Font','form-pdf');?></span>
+                                                <!-- choice of the Font -->
                                             <select class="form-select" id="" name="editFontPDF_<?= $tmp->id_template?>">                                          
-                                                    <option value="courier"   <?php if($tmp->tmp_font=="courier"){print "selected";} ?>>Courier</option>  
-                                                    <option value="helvetica" <?php if($tmp->tmp_font=="helvetica"){print "selected";} ?>>Helvetica</option>   
-                                                    <option value="times"     <?php if($tmp->tmp_font=="times"){print "selected";} ?>>Times</option> 
-                                                    <option value="times-roman" <?php if($tmp->tmp_font=="times-roman"){print "selected";} ?>>Times Roman</option>   
-                                                    <option value="symbol"      <?php if($tmp->tmp_font=="symbol"){print "selected";} ?>>symbol</option>  
-                                                    <option value="zapfdinbats" <?php if($tmp->tmp_font=="zapfdinbats"){print "selected";} ?>>Zapfdinbats</option>                                                                       
+                                                    <option value="courier"    <?php if($tmp->tmp_font=="courier"){print "selected";} ?>>Courier</option>  
+                                                    <option value="helvetica"  <?php if($tmp->tmp_font=="helvetica"){print "selected";} ?>>Helvetica</option>   
+                                                    <option value="times"      <?php if($tmp->tmp_font=="times"){print "selected";} ?>>Times</option> 
+                                                    <option value="times-roman"<?php if($tmp->tmp_font=="times-roman"){print "selected";} ?>>Times Roman</option>   
+                                                    <option value="symbol"     <?php if($tmp->tmp_font=="symbol"){print "selected";} ?>>symbol</option>  
+                                                    <option value="zapfdinbats"<?php if($tmp->tmp_font=="zapfdinbats"){print "selected";} ?>>Zapfdinbats</option>                                                                       
                                             </select> 
                                                 <span class="input-group-text"><?php echo __('Size','form-pdf');?></span>
+                                                <!-- width -->
                                             <select class="form-select" id="validationDefault04" name="editSizeFont_<?= $tmp->id_template?>">
                                                 <option selected value=""></option>
                                                 <?php for($i=0;$i<=512;$i++){?>
@@ -1195,6 +1198,7 @@ function forms_to_pdf_templates_submenu_cb(){
                                                 <?php } ?>                                            
                                             </select>
                                                 <span class="input-group-text"><?php echo __('Line Height','form-pdf');?></span>
+                                                <!-- height -->
                                             <select class="form-select" id="validationDefault04" name="editLineHeight_<?= $tmp->id_template?>">
                                                 <option selected value=""></option>
                                                 <?php for($i=0;$i<=512;$i++){?>
@@ -1215,7 +1219,7 @@ function forms_to_pdf_templates_submenu_cb(){
             <?php }  ?>
         </form>
 
-        <!-- ajouter un nouveau template -->
+        <!--  add a new template -->
         <form method="post" >
                 <div class="modal fade" id="addTemplateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -1226,22 +1230,12 @@ function forms_to_pdf_templates_submenu_cb(){
                             </div>
                         <div class="modal-body">                    
                                 <ul class="list-group list-group-flush">
-                                    <!-- <li class="list-group-item">
-                                        <div class="input-group mb-3">
-                                            <input type="file" class="form-control" name="editImgTemplate" id="chooseFile" placeholder="" aria-label="">
-                                            <span class="input-group-text" id="basic-addon1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-arrow-up" viewBox="0 0 16 16">
-                                                    <path d="M8 11a.5.5 0 0 0 .5-.5V6.707l1.146 1.147a.5.5 0 0 0 .708-.708l-2-2a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L7.5 6.707V10.5a.5.5 0 0 0 .5.5z"></path>
-                                                    <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </li> -->
                                     <li class="list-group-item">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text"><?php echo __('Title PDF','form-pdf');?></span>
                                             <input type="text" class="form-control" name="addTitlePDF" id="editTitlePDF" value ="<?php echo __('(No title)','form-pdf');?>" aria-label="" required>
                                             <span class="input-group-text"><?php echo __('Status','form-pdf');?></span>
+                                            <!-- choice to use or not a new model -->
                                             <select class="form-select"  name="addStatus" aria-label=""> 
                                                 <option value="0" ><?php echo __('Not activated','form-pdf');?></option>  
                                                 <option value="1" ><?php echo __('Activated','form-pdf');?></option>  
@@ -1260,6 +1254,7 @@ function forms_to_pdf_templates_submenu_cb(){
                                     <li class="list-group-item">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text"><?php echo __('Size paper','form-pdf');?></span>
+                                            <!-- choice of paper size -->
                                             <select class="form-select"  name="addSizePaper" onchange="changeWidthNHeight(this);" aria-label=""> 
                                                 <option value="" >---<?php echo __('Select size paper','form-pdf');?>---</option>                                        
                                                 <option value="a4_portrait" data-width='595' data-height='842'>A4 (<?php echo __('PORTRAIT','form-pdf');?>) (595x842)</option>
@@ -1272,6 +1267,7 @@ function forms_to_pdf_templates_submenu_cb(){
                                                 <option value="postcard" data-width="283" data-height="416" ><?php echo __('postcard','form-pdf');?> (283x416)</option>
                                             </select>
                                             <span class="input-group-text"><?php echo __('Media type ','form-pdf');?></span>
+                                            <!-- choice of screen size -->
                                             <select class="form-select"  name="addMediaType" aria-label=""> 
                                                 <option value="" >---<?php echo __('Select media type','form-pdf');?>---</option>                                        
                                                 <option value="screen" data-desc="<?php echo __('Intended for non-paged computer screens.','form-pdf');?>"><?php echo __('Screen','form-pdf');?></option>
@@ -1288,6 +1284,7 @@ function forms_to_pdf_templates_submenu_cb(){
                                     <li class="list-group-item">
                                         <div class="input-group mb-3">
                                                 <span class="input-group-text"><?php echo __('Font','form-pdf');?></span>
+                                                <!-- choice of fonts -->
                                             <select class="form-select" id="" name="addFontPDF">                                          
                                                     <option value="courier">Courier</option>  
                                                     <option value="helvetica" selected>Helvetica</option>   
@@ -1297,12 +1294,14 @@ function forms_to_pdf_templates_submenu_cb(){
                                                     <option value="zapfdinbats">Zapfdinbats</option>                                                                       
                                             </select>   
                                                 <span class="input-group-text"><?php echo __('Size','form-pdf');?></span>
+                                                <!-- width of paper -->
                                             <select class="form-select" id="addSizeFont" name="addSizeFont">                                              
                                                 <?php for($i=1;$i<=512;$i++){?>
                                                         <option value="<?=$i;?>" <?php if($i=="14") {print "selected";}?>><?php echo $i; ?></option>
                                                 <?php } ?>                                            
                                             </select>
                                                 <span class="input-group-text"><?php echo __('Line Height','form-pdf');?></span>
+                                                <!-- height of paper -->
                                             <select class="form-select" id="addLineHeight" name="addLineHeight">                                          
                                                 <?php for($i=1;$i<=512;$i++){?>
                                                         <option value="<?=$i; ?>" <?php if($i=="14") {print "selected";}?>><?php echo $i; ?></option>
@@ -1314,6 +1313,7 @@ function forms_to_pdf_templates_submenu_cb(){
                                         <div class="input-group mb-3">                                      
                                         <!-- <span style="display: inline-block;">you can choose a logo from the drop-down list at the bottom </span> -->
                                                 <span class="input-group-text"><?php echo __('choose your image ','form-pdf');?></span>
+                                                <!-- choice of picture -->
                                             <select class="form-select" name="addImg" id="addImg" aria-label="">
                                                 <option value="" >---<?php echo __('Select media type','form-pdf');?>---</option> 
                                                 <?php  foreach($result_img as $key => $img){                                        
@@ -1333,17 +1333,17 @@ function forms_to_pdf_templates_submenu_cb(){
                 </div>  <!-- End Modal Add Template   -->    
         </form>
 
-        <!-- debut sous-menu "templates" -->
+        <!-- start of "templates" sub-menu  -->
     <main>
             <?php if(isset($_POST['selectYourTemplate']) && isset($_POST['choiceTemplate']) && !empty($_POST['choiceTemplate'])) {
 
-                //on recupère l'id et le nom du template dans tableau
+                //we get the ID and the name of the template in table
                 $choice = explode('_',$_POST['choiceTemplate']);
               
-                //d'abord on affecte tout les status a false
+                //first we set all status to false in the data base
                   $wpdb->query($wpdb->prepare("UPDATE `".TMP_TABLE_NAME."` SET `tmp_status`=%d where 1",0));
 
-                // ensuite on affecte le template choisie à true
+                //then we set the chosen template to true in the data base
                 $wpdb->query($wpdb->prepare("UPDATE `".TMP_TABLE_NAME."` SET `tmp_status`=%d where `id_template`=%d ",1 ,$choice[0]));
                 ?>
 
@@ -1372,16 +1372,16 @@ function forms_to_pdf_templates_submenu_cb(){
                         </div>
                     </div>
                 </section>
+                <!-- satart display template -->
                 <?php if($find_template){ ?>          
-            
                 <div class="album py-5 bg-light">
                         <div class="container">
                             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                                <!-- afficher les données pour chaque template -->
+                                <!-- display the data for each template  -->
                                 <?php foreach($result_tmp as $key => $tmp){?>
                                     <div class="col">
                                         <div class="card shadow-sm text-center">
-                                            <!-- afficher l'image du template 1 -->
+                                            <!-- display the image of template -->
                                             <?php  
                                                // display image when is selected in template 
                                                 $sql_picture= $wpdb->prepare("SELECT `id_img`, `img_blob`, `img_type`,`img_title` FROM `".IMG_TABLE_NAME."` WHERE `id_img`=%d",$tmp->img_id);
@@ -1389,7 +1389,7 @@ function forms_to_pdf_templates_submenu_cb(){
 
                                             if(!empty($resultPicture)){
                                                 foreach($resultPicture as $key => $img){                                          
-                                                    echo '<img src="data:image/'.$img->img_type.';base64,'.$img->img_blob.'" class="card-img-top" alt="'.__('Screen-shot','form-pdf').'" height="150px" width="18rem">';
+                                                    echo '<img src="data:image/'.$img->img_type.';base64,'.$img->img_blob.'" class="card-img-top" alt="'.__('Logo','form-pdf').'" height="150px" width="18rem">';
                                                 }
                                             }
                                             // display an example of picture 
@@ -1413,6 +1413,7 @@ function forms_to_pdf_templates_submenu_cb(){
                                                         <label class="form-check-label" for="exampleRadios1">
                                                             <?php echo __('Use','form-pdf')?>
                                                         </label>
+                                                        <!--if a model is selected in advance then it will appear selected -->
                                                         <input class="form-check-input" type="radio" name="choiceTemplate" <?php if($tmp->tmp_status==true){echo "checked";} ?>  <?php if(isset($_POST['choiceTemplate'])&& $_POST['choiceTemplate']==$tmp->id_template.'_'.$tmp->title_pdf) {print "checked";} ?> value="<?php echo $tmp->id_template.'_'.$tmp->title_pdf; ?>">
                                                     </div>
                                                 </div>
