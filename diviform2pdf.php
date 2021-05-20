@@ -372,7 +372,7 @@ function form_to_pdf_submenu_cb() {
                                                     if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {                      
                                                         foreach ($data['data'] as $key => $field) {
                                                             echo '<div class="input-group mb-3">';
-                                                                //the "name" receives a name + a number + a unique id  
+                                                                //the "name" receives a name + a number + a unique ID 
                                                                 echo '<input type="hidden" class="form_control" id="basic-addon3" name="field_label_'.$key.'_'.$id_update.'" value="'.$field['label'].'">';
                                                                 echo '<span class="input-group-text" id="basic-addon3">'.$field['label'].'</span>';
                                                                 echo '<input type="text" class="form-control" id="basic-url" name="field_value_'.$key.'_'.$id_update.'" value="'.$field['value'].'" aria-describedby="basic-addon3">';                            
@@ -428,11 +428,11 @@ function form_to_pdf_submenu_cb() {
                                             echo '<div class="col-4">';                               
                                                 echo'<div class="row">'; 
                                                     echo '<div class="col-md-6">';
-                                                            echo '<select class="form-select" id="bulk-action-selector" name="action_selector">';
-                                                                echo '<option value="-1">'. __('Bulk Actions', 'form-pdf') .'</option>';
-                                                                echo '<option value="delete">' . __('Delete', 'form-pdf') . '</option>';
-                                                            echo '</select>';
-                                                        echo '</div>';  //fin col 
+                                                        echo '<select class="form-select" id="bulk-action-selector" name="action_selector">';
+                                                            echo '<option value="-1">'. __('Bulk Actions', 'form-pdf') .'</option>';
+                                                            echo '<option value="delete">' . __('Delete', 'form-pdf') . '</option>';
+                                                        echo '</select>';
+                                                    echo '</div>';  //fin col 
                                                     echo '<input type="submit" id="todoaction" name="btnaction"  class="btn btn-outline-primary col-md-3" value="'. __('Apply', 'form-pdf').'"/>';
                                                 echo '</div>'; //  fin row                                       
                                             echo '</div>';  //fin col    
@@ -531,8 +531,9 @@ function form_to_pdf_submenu_cb() {
                                                                                                             foreach ($data['data'] as $key => $field) {                                                                                                                
                                                                                                                     $name = esc_html(html_entity_decode($field['value']));
                                                                                                                     $name_value=trim(ucfirst(strtolower($name)));
-                                                                                                                    
+                                                                                                                    // if a string exceeds a certain number of words 
                                                                                                                     if(strlen($name_value) > $display_character){
+                                                                                                                        // application of a limit of 3 of the predefined limit 
                                                                                                                         echo '<td>'.substr($name_value, 0, $display_character).'...</td>';
                                                                                                                     }else{
                                                                                                                         echo '<td>'.$name_value.'</td>';
@@ -549,7 +550,8 @@ function form_to_pdf_submenu_cb() {
                                                                                                                         echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.$email_value.'</a></td>';
                                                                                                                     }
                                                                                                                 }                                                                                                                                               
-                                                                                                            }                                                                      
+                                                                                                            } 
+                                                                     
                                                                                                             echo '<td data-head="post_date">'.$post->post_date.'</td>';  
                                                                                                                                                                         
                                                                                                         echo '</tr>';
@@ -1909,7 +1911,7 @@ function forms_to_pdf_get_export_rows($id_post,$form_name) {
                 }
             }
         }
-
+        // deletion of the beginning and end of spaces 
         $rows[] = rtrim($row, ',');
 
         if (isset($id_post)&& !empty($id_post)){
@@ -2160,7 +2162,7 @@ function forms_to_pdf_et_contact_page_headers($headers, $contact_name, $contact_
                 if($value['field_type']=="text"){
                     $type   = "textarea"; 
                 }
-            
+                // division into several sub-tables 
                 $data[] = array('label' => $label, 'original_name' =>  $original_name,'original_name2' =>  $original_name,'value','value' => $values, 'type' => $type);
 
                 if ($value['field_type'] == 'email') {

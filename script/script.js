@@ -164,7 +164,6 @@ function changeWidthNHeight(select) {
 	}
 }
 
-
 function launchModalAddTemplate(){
 	jQuery('#addTemplateModal').modal('show'); 
 }
@@ -177,7 +176,6 @@ function select_f2p_import_csv(){
    	}
 	window.location = url;
 }
-
 
 //Check import file is CSV file or not
 function checkfile(sender) {
