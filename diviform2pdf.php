@@ -187,27 +187,25 @@ function update_in_database_f2p(){
         if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
             //browse the table posts
             foreach($posts as $post){  
-                    // obtaining data, with the id and the name of the post_type as parameters            
-                    if ($data = get_post_meta($post_id_find_unique[0], 'forms_to_pdf', true)) {
-                        // condition if you are in the right form selected beforehand 
-                        if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {  
-                            $data_update = [];
-                            // browse the first sub-array data of the multi-dimensional array $data
-                            foreach($data["data"] as $key => $value){
-                                // browse the table of fields retrieved by the "post" method
-                                foreach($rename_fields_tmp as $key2 => $field){
-                                    $data_update[] = [
-                                        "label"          => $data["data"][$key2]["label"],
-                                        "original_name"  => $field,
-                                        "original_name2" => $data["data"][$key2]["original_name2"],
-                                        "value"          => $data["data"][$key2]["value"],
-                                        "type"           => $data["data"][$key2]["type"],
-                                    ];
-                                }break;
-                            
-                            }break;
-                    }
-                    
+                // obtaining data, with the id and the name of the post_type as parameters            
+                if ($data = get_post_meta($post_id_find_unique[0], 'forms_to_pdf', true)) {
+                    // condition if you are in the right form selected beforehand 
+                    if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {  
+                        $data_update = [];
+                        // browse the first sub-array data of the multi-dimensional array $data
+                        foreach($data["data"] as $key => $value){
+                            // browse the table of fields retrieved by the "post" method
+                            foreach($rename_fields_tmp as $key2 => $field){
+                                $data_update[] = [
+                                    "label"          => $data["data"][$key2]["label"],
+                                    "original_name"  => $field,
+                                    "original_name2" => $data["data"][$key2]["original_name2"],
+                                    "value"          => $data["data"][$key2]["value"],
+                                    "type"           => $data["data"][$key2]["type"],
+                                ];
+                            }break;                        
+                        }break;
+                    }                    
                 }
             }      
         }
@@ -226,10 +224,38 @@ function update_in_database_f2p(){
     }    
 }
 
+// suuprimer une entrée d'un formulaire
+function delete_in_database_f2p(){   
+    if (isset($_REQUEST['btnaction'])){
+        if(isset($_REQUEST['export_id']) && !empty($_REQUEST['export_id'])) {
+            global $wpdb;  
+            if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {  
+                if(isset($_REQUEST['action_selector']) && $_REQUEST['action_selector']=="delete"){               
+                    foreach($_REQUEST['export_id'] as $key=> $ids){                          
+                        if ($data = get_post_meta($ids, 'forms_to_pdf', true)) {  
+                            if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {                                 
+                                foreach ($posts as $k => $post ) {
+                                    if($ids==$post->ID){                                       
+                                        $wpdb->query("DELETE FROM $wpdb->posts WHERE ID IN($ids)");
+                                        $wpdb->query("DELETE FROM $wpdb->postmeta WHERE post_id IN($ids)");
+                                            // echo '<script>alert("delete")</script>';                   
+                                    }
+                                }                                
+                            }
+                        }
+                    }
+                }
+            }
+        } else{
+            echo '<script>window.alert("you must choose at least one row of the table")</script>';
+        }  
+    } 
+}
+
 function form_to_pdf_submenu_cb() { 
     $url="/edit.php?post_type=formstopdf_db&page=forms_to_pdf_home";
     echo '<div class="container">';
-                //  get all posts from table wp_posts with parameters "post_type" and "posts_per_page" set to -1 for all
+                // get all posts from table wp_posts with parameters "post_type" and "posts_per_page" set to -1 for all
                 if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
                     $forms = array();
                       // browse all posts                
@@ -394,6 +420,7 @@ function form_to_pdf_submenu_cb() {
                                     </div>  <!-- End Modal Edit Information   -->                 
                              <?php } } ?>
                                 <!-- start of the search bar for dates -->
+                              
                                 <div class="row" >
                                     <div class="card" id="data-filter">  
                                         <div class="card-body">                             
@@ -445,9 +472,9 @@ function form_to_pdf_submenu_cb() {
                                                             echo '<option value="pdf">' . __('Download PDF FILE', 'form-pdf') . '</option>';
                                                             echo '<option value="csv">' . __('Download CSV File', 'form-pdf') . '</option>';
                                                         echo '</select>';
-                                                    echo '</div>';  //fin col 
-                                                     echo '<input type="submit" name="download" id="buttonDownload"  class="btn btn-outline-primary col-md-6" value="'. __('Export the Form', 'form-pdf').'">';      
-                                                echo '</div>';                                                  
+                                                    echo '</div>';  //fin col ?>
+                                                    <input type="submit" name="download"  id="buttonDownload" class="btn btn-outline-primary col-md-6" value="<?php echo __('Export the Form', 'form-pdf'); ?>">     
+                                                <?php echo '</div>';                                                  
                                             echo '</div>'; //fin col  
                                             // display the number of item in the table
                                             echo '<div class="d-flex justify-content-end"><span class="">'.(($total_entries == 1) ? "1 " . __('item','form-pdf') : $total_entries . ' ' . __('items','form-pdf')).'</span></div>';         
@@ -456,7 +483,7 @@ function form_to_pdf_submenu_cb() {
 
                                     echo '<div class="row">'; 
                                     echo '<div class="col-12">'; 
-                                   
+                                                   
                                         ?>
                                     <!-- start for display the table -->
                                 <table class="table table-striped table-hover">
@@ -492,83 +519,81 @@ function form_to_pdf_submenu_cb() {
                                             $find_date=false;
                                             $find_searche=false;   
                                             // recherche par date 
+                
                                             if(isset($_POST['searchdate']) || isset($_POST['f2p-search-btn'])){                               
                                                 if (isset($_POST['startdate']) && isset($_POST['enddate']) && isset($_POST['f2p-search']) && !empty($_POST['startdate']) && !empty($_POST['enddate'])){                                                   
-                                                    if(empty($_POST['f2p-search'])){
-                                                      
+                                                    if(empty($_POST['f2p-search'])){                                                      
                                                         foreach ($posts as $post) { 
-                                                                if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
-                                                                        if ($data['extra']['submitted_on'] == $form_name){        
-                                                                            if ($postdate=$post->post_date){ 
-                                                                                // separation of the date of the "post" in year, month and day                                                          
-                                                                                $formatDate =date('Y-m-d\TH:i', strtotime($postdate));                                    
-                                                                                $Year  = date("Y", strtotime($formatDate)); 
-                                                                                $month = date("m", strtotime($formatDate));
-                                                                                $day   = date("d", strtotime($formatDate));
-                                                                                // retrieve the value of the search field start date 
-                                                                                $startdate=$_POST['startdate'];
-                                                                                // separation of the date of the "startdate" in year, month and day   
-                                                                                $s_year  = date("Y", strtotime($startdate)); 
-                                                                                $s_month = date("m", strtotime($startdate));
-                                                                                $s_day   = date("d", strtotime($startdate));
-                                                                                // retrieve the value of the search field end date 
-                                                                                $enddate=$_POST['enddate'];
-                                                                                // separation of the date of the "enddate" in year, month and day 
-                                                                                $e_year  = date("Y", strtotime($enddate)); 
-                                                                                $e_month = date("m",strtotime($enddate));
-                                                                                $e_day   = date("d",strtotime($enddate));
-                                                                                //  start search by year, month and day  
-                                                                                if($Year >=$s_year){
-                                                                                    if($month >= $s_month){
-                                                                                        if($day>= $s_day){
-                                                                                            if($Year <=$e_year){
-                                                                                                if($month <= $e_month){
-                                                                                                    if($day <= $e_day){                                                                                                    
-                                                                                                        echo '<tr>';            
-                                                                                                            echo '<th class="manage-column"></th>';
-                                                                                                            echo '<td class="manage-column column-cb check-column" ><input type="checkbox" name="export_id[]" value="'.$post->ID.'" /></td>';
-                                                                                                            echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
-                                                                                                            foreach ($data['data'] as $key => $field) {                                                                                                                
-                                                                                                                    $name = esc_html(html_entity_decode($field['value']));
-                                                                                                                    $name_value=trim(ucfirst(strtolower($name)));
-                                                                                                                    // if a string exceeds a certain number of words 
-                                                                                                                    if(strlen($name_value) > $display_character){
-                                                                                                                        // application of a limit of 3 of the predefined limit 
-                                                                                                                        echo '<td>'.substr($name_value, 0, $display_character).'...</td>';
-                                                                                                                    }else{
-                                                                                                                        echo '<td>'.$name_value.'</td>';
-                                                                                                                    }
-                                                                                                                                                                                         
-                                                                                                                if($field['value'] == 'email'){
-                                                                                                                    
-                                                                                                                    $email = esc_html(html_entity_decode($field['value']));
-                                                                                                                    $email_value=trim(strtolower($email));                                                                  
-                                                                                                            
-                                                                                                                    if(strlen($email_value) > $display_character){
-                                                                                                                        echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.substr($email_value, 0, $display_character).'...</a></td>';
-                                                                                                                    }else{
-                                                                                                                        echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.$email_value.'</a></td>';
-                                                                                                                    }
-                                                                                                                }                                                                                                                                               
-                                                                                                            } 
-                                                                     
-                                                                                                            echo '<td data-head="post_date">'.$post->post_date.'</td>';  
-                                                                                                                                                                        
-                                                                                                        echo '</tr>';
-                                                                                                            $find_date=true;                                                                                           
-                                                                                                    }    
-                                                                                                }
-                                                                                            }
+                                                            if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
+                                                                if ($data['extra']['submitted_on'] == $form_name){        
+                                                                    if ($postdate=$post->post_date){ 
+                                                                        // separation of the date of the "post" in year, month and day                                                          
+                                                                        $formatDate =date('Y-m-d\TH:i', strtotime($postdate));                                    
+                                                                        $Year  = date("Y", strtotime($formatDate)); 
+                                                                        $month = date("m", strtotime($formatDate));
+                                                                        $day   = date("d", strtotime($formatDate));
+                                                                        // retrieve the value of the search field start date 
+                                                                        $startdate=$_POST['startdate'];
+                                                                        // separation of the date of the "startdate" in year, month and day   
+                                                                        $s_year  = date("Y", strtotime($startdate)); 
+                                                                        $s_month = date("m", strtotime($startdate));
+                                                                        $s_day   = date("d", strtotime($startdate));
+                                                                        // retrieve the value of the search field end date 
+                                                                        $enddate=$_POST['enddate'];
+                                                                        // separation of the date of the "enddate" in year, month and day 
+                                                                        $e_year  = date("Y", strtotime($enddate)); 
+                                                                        $e_month = date("m",strtotime($enddate));
+                                                                        $e_day   = date("d",strtotime($enddate));
+                                                                        //  start search by year, month and day  
+                                                                        if($Year >=$s_year){
+                                                                            if($month >= $s_month){
+                                                                                if($day>= $s_day){
+                                                                                    if($Year <=$e_year){
+                                                                                        if($month <= $e_month){
+                                                                                            if($day <= $e_day){                                                                                                    
+                                                                                                echo '<tr>';            
+                                                                                                    echo '<th class="manage-column"></th>';
+                                                                                                    echo '<td class="manage-column column-cb check-column" ><input type="checkbox" name="export_id[]" value="'.$post->ID.'" /></td>';
+                                                                                                    echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
+                                                                                                    foreach ($data['data'] as $key => $field) {                                                                                                                
+                                                                                                            $name = esc_html(html_entity_decode($field['value']));
+                                                                                                            $name_value=trim(ucfirst(strtolower($name)));
+                                                                                                            // if a string exceeds a certain number of words 
+                                                                                                            if(strlen($name_value) > $display_character){
+                                                                                                                // application of a limit of 3 of the predefined limit 
+                                                                                                                echo '<td>'.substr($name_value, 0, $display_character).'...</td>';
+                                                                                                            }else{
+                                                                                                                echo '<td>'.$name_value.'</td>';
+                                                                                                            }
+                                                                                                                                                                                    
+                                                                                                            if($field['value'] == 'email'){
+                                                                                                                
+                                                                                                                $email = esc_html(html_entity_decode($field['value']));
+                                                                                                                $email_value=trim(strtolower($email));                                                                  
+                                                                                                        
+                                                                                                                if(strlen($email_value) > $display_character){
+                                                                                                                    echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.substr($email_value, 0, $display_character).'...</a></td>';
+                                                                                                                }else{
+                                                                                                                    echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.$email_value.'</a></td>';
+                                                                                                                }
+                                                                                                            }                                                                                                                                               
+                                                                                                    }
+                                                                                                    echo '<td data-head="post_date">'.$post->post_date.'</td>';                                                             
+                                                                                                echo '</tr>';
+                                                                                                    $find_date=true;                                                                                           
+                                                                                            }    
                                                                                         }
                                                                                     }
                                                                                 }
                                                                             }
                                                                         }
+                                                                    }
+                                                                }
                                                             }
                                                         } if(!$find_date) {
-                                                                echo '<tr>';      
-                                                                    echo'<div id="noRecordsFounds"> </div>';                                                                                                                             
-                                                                    echo '<td colspan="6" >'.__('No records found.','form-pdf').'</td>';                                                          
+                                                                echo '<tr>';                                                                                                                        
+                                                                    echo '<td colspan="6" >'.__('No records found.','form-pdf').'</td>';     
+                                                                    ?> <td><input type="hidden" class="norecordsfound" value="nofound"></td><?php
                                                                 echo '</tr>';
                                                             } 
                                                     }else if(!empty($_POST['f2p-search'])) {
@@ -644,10 +669,8 @@ function form_to_pdf_submenu_cb() {
                                                                                     echo '<th class="manage-column"></th>';
                                                                                     echo '<td class="manage-column column-cb check-column" ><input type="checkbox" name="export_id[]" value="'.$post->ID.'" /></td>';
                                                                                     echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
-                                                                                    foreach ($data['data'] as $key => $field) { 
-            
-                                                                                       // if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
-                                                                                           
+                                                                                    foreach ($data['data'] as $key => $field) {
+
                                                                                             $name = esc_html(html_entity_decode($field['value']));
                                                                                             $name_value=trim(ucfirst(strtolower($name)));
                                                                                             
@@ -656,7 +679,7 @@ function form_to_pdf_submenu_cb() {
                                                                                             }else{
                                                                                                 echo '<td>'.$name_value.'</td>';
                                                                                             }
-                                                                                       // }                                                                           
+                                                                                  
                                                                                         if($field['value'] == 'email'){
                                                                                             
                                                                                             $email = esc_html(html_entity_decode($field['value']));
@@ -678,7 +701,8 @@ function form_to_pdf_submenu_cb() {
                                                         }                                                                                         
                                                         else {
                                                                 echo '<tr>';                                                                                                                                   
-                                                                    echo '<td colspan="6" >'.__('No records found.','form-pdf').'</td>';                                                          
+                                                                    echo '<td colspan="6" >'.__('No records found.','form-pdf').'</td>';
+                                                                    ?> <td><input type="hidden" class="norecordsfound" value="nofound"></td><?php                                                          
                                                                 echo '</tr>';
                                                             }                          
                                                     }else{
@@ -686,15 +710,15 @@ function form_to_pdf_submenu_cb() {
                                                         $f2psearch=CharacterCleaner($f2psearch);
                                                         foreach ($posts as $post) { 
                                                             if($data = get_post_meta($post->ID, 'forms_to_pdf', true)) {                                                                        
-                                                                    if ($data['extra']['submitted_on'] == $form_name) {                
-                                                                        foreach ($data['data'] as $field) { 
-                                                                            $fieldValue=CharacterCleaner($field['value']);
-                                                                            if(stristr($fieldValue,$f2psearch)){                                               
-                                                                                $id_find_search[]=$post->ID;
-                                                                                $find_searche=true;
-                                                                            }
-                                                                        }  
-                                                                    } 
+                                                                if ($data['extra']['submitted_on'] == $form_name) {                
+                                                                    foreach ($data['data'] as $field) { 
+                                                                        $fieldValue=CharacterCleaner($field['value']);
+                                                                        if(stristr($fieldValue,$f2psearch)){                                               
+                                                                            $id_find_search[]=$post->ID;
+                                                                            $find_searche=true;
+                                                                        }
+                                                                    }  
+                                                                } 
                                                             }
                                                         }                                                     
                                                         if($find_searche){
@@ -739,7 +763,8 @@ function form_to_pdf_submenu_cb() {
                                                                 }
                                                         }else {
                                                             echo '<tr>';                                                                                                                                   
-                                                                echo '<td colspan="6" >'.__('No records found.','form-pdf').'</td>';                                                          
+                                                                echo '<td colspan="6" >'.__('No records found.','form-pdf').'</td>'; 
+                                                                                                                     
                                                             echo '</tr>'; 
                                                         }             
                                                     } 
@@ -793,10 +818,7 @@ function form_to_pdf_submenu_cb() {
                                                                         echo '<th class="manage-column"></th>';
                                                                         echo '<td class="manage-column column-cb check-column" ><input type="checkbox" name="export_id[]" value="'.$post->ID.'" /></td>';
                                                                         echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
-                                                                        foreach ($data['data'] as $key => $field) { 
-                                                                            // print_r ($field);
-                                                                            // wp_die();
-                                                                          // if( !isset($_POST['visible_'.$field['original_name']]) || $_POST['visible_'.$field['original_name']]==1){                                                                               
+                                                                        foreach ($data['data'] as $key => $field) {                                                                              
                                                                                 $name = esc_html($field['value']);
                                                                                 $name_value=trim(ucfirst(strtolower($name)));
                                                                                 
@@ -804,7 +826,7 @@ function form_to_pdf_submenu_cb() {
                                                                                     echo '<td>'.substr($name_value, 0, $display_character).'...</td>';
                                                                                 }else{
                                                                                     echo '<td>'.$name_value.'</td>';
-                                                                                }                                                                           
+                                                                                }                                                                          
                                                                                                                                                     
                                                                                 if($field['value'] == 'email'){
                                                                                     
@@ -816,8 +838,7 @@ function form_to_pdf_submenu_cb() {
                                                                                     }else{
                                                                                         echo '<td><a href="mailto:'.$email_value.'" target="_blank">'.$email_value.'</a></td>';
                                                                                     }
-                                                                                } 
-                                                                            //}                                                                                                                                              
+                                                                                }                                                                                                                                             
                                                                         }                                                                      
                                                                         echo '<td data-head="post_date">'.$post->post_date.'</td>';                                                                                                                                       
                                                                 echo '</tr>';
@@ -855,12 +876,6 @@ function form_to_pdf_submenu_cb() {
                                 echo '</div>'; // fin col table
                                 echo '</div>'; // fin row table
                         echo '</form>'; // fin form post
-
-                        foreach ($posts as $post) { 
-                            if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
-                                print_r($data);
-                            }
-                        }
                     }                    
                 } else {
                         // if there is no form submitted then a picture of a cat is displayed 
@@ -1566,8 +1581,6 @@ function forms_to_pdf_import_submenu_cb(){
                                                 }break;
                                             
                                             }
-                                            unset($data);
-                                            $data="";
                                         }                           
                                     }
                                 }
@@ -1833,34 +1846,8 @@ function download_or_delete_img_f2p(){
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php 
-            }
-                    
-        }       
-    
-}
-
-// suuprimer une entrée d'un formaulaire
-function delete_in_database_f2p(){   
-    if (isset($_REQUEST['btnaction']) && isset($_REQUEST['export_id'])&& !empty($_REQUEST['export_id'])){   
-        global $wpdb;  
-        if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {  
-            if(isset($_REQUEST['action_selector']) && $_REQUEST['action_selector']=="delete"){               
-                foreach($_REQUEST['export_id'] as $key=> $ids){                          
-                    if ($data = get_post_meta($ids, 'forms_to_pdf', true)) {  
-                            if ($data['extra']['submitted_on'] == $_REQUEST['form-name']) {                                 
-                                foreach ($posts as $k => $post ) {
-                                    if($ids==$post->ID){                                       
-                                       $wpdb->query("DELETE FROM $wpdb->posts WHERE ID IN($ids)");
-                                       $wpdb->query("DELETE FROM $wpdb->postmeta WHERE post_id IN($ids)");
-                                         // echo '<script>alert("delete")</script>';                   
-                                    }
-                                }                                
-                            }
-                    }
-                }
-            }
-        }
-    }    
+            }    
+        }           
 }
 
 

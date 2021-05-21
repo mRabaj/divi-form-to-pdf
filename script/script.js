@@ -1,13 +1,11 @@
 jQuery(document).ready(function($) {
 	
 	if(window.location.href.indexOf("forms_to_pdf_home")!==-1)
-	
 	{	
 		document.getElementById("bulk-export").style.display = "block";
 		document.getElementById("data-filter").style.display = "block";
 		document.getElementById("display_setup").style.display = "block";
 	
-		
 			//Set date input field's max date to today
 
 		var today = new Date();
@@ -31,26 +29,36 @@ jQuery(document).ready(function($) {
 	
 			})()
 
-		// if(jQuery("#noRecordsFounds")){
-		// 	jQuery("#buttonDownload").attr('disabled', true)
-		// }
-	
-}
+		//disabled button when "non record found"
 
-        jQuery('#img_historique').hide();
+		jQuery("#buttonDownload").on("mouseenter", function (){
+			if(jQuery(".norecordsfound").val()=="nofound"){
+				jQuery("#buttonDownload").attr("disabled", true)
+				console.log("tes")
+			}	
+		})
+		jQuery("#todoaction").on("mouseenter", function (){
+			if(jQuery(".norecordsfound").val()=="nofound"){
+				jQuery("#todoaction").attr("disabled", true)
+				console.log("tes")
+			}	
+		})
+	}
 
-        jQuery('#table_id tbody').on('mouseover', 'tr', function () {
-            var hex_data = jQuery(this).attr('value');
+	jQuery('#img_historique').hide();
 
-            var extencion = jQuery(this).attr('value2');
+	jQuery('#table_id tbody').on('mouseover', 'tr', function () {
+		var hex_data = jQuery(this).attr('value');
 
-            jQuery('#img_historique').attr('src', 'data:image/'+extencion+';base64,'+hex_data);
-            jQuery('#img_historique').show();
-        });
+		var extencion = jQuery(this).attr('value2');
 
-        jQuery( "#table_id tbody" ).mouseleave(function() {
-            jQuery('#img_historique').hide();
-        });
+		jQuery('#img_historique').attr('src', 'data:image/'+extencion+';base64,'+hex_data);
+		jQuery('#img_historique').show();
+	});
+
+	jQuery( "#table_id tbody" ).mouseleave(function() {
+		jQuery('#img_historique').hide();
+	});
 
 
 
