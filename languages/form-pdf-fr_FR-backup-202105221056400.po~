@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Divi Form2PDF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-22 08:01+0000\n"
-"PO-Revision-Date: 2021-05-22 10:56+0000\n"
+"PO-Revision-Date: 2021-05-22 10:49+0000\n"
 "Last-Translator: \n"
 "Language-Team: Français\n"
 "Language: fr_FR\n"
@@ -163,10 +163,6 @@ msgstr "Importer une image"
 #: diviform2pdf.php:1506
 msgid "Import CSV"
 msgstr "Importer CSV"
-
-#: diviform2pdf.php:1605
-msgid "Import Data"
-msgstr "Importer les données"
 
 #: diviform2pdf.php:472
 msgid "item"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Divi Form2PDF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-22 08:01+0000\n"
-"PO-Revision-Date: 2021-05-22 10:56+0000\n"
+"PO-Revision-Date: 2021-05-22 10:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: Français\n"
 "Language: fr_FR\n"
@@ -118,10 +118,6 @@ msgstr "Exporter le formulaire"
 msgid "Export to..."
 msgstr "Exporter vers ..."
 
-#: diviform2pdf.php:1567
-msgid "Field name"
-msgstr "Nom du champ"
-
 #: diviform2pdf.php:1189
 msgid "Font"
 msgstr "Police"
@@ -133,10 +129,6 @@ msgstr "à partir d'ici."
 #: diviform2pdf.php:1156
 msgid "Height"
 msgstr "Hauteur"
-
-#: diviform2pdf.php:1703
-msgid "here"
-msgstr "ici"
 
 #: diviform2pdf.php:1374
 msgid "Here you can add your templates. Or simply modify them as you wish"
@@ -154,7 +146,7 @@ msgstr ""
 
 #: diviform2pdf.php:1740
 msgid "Import"
-msgstr "Importation"
+msgstr "Importer"
 
 #: diviform2pdf.php:1718
 msgid "Import a picture"
@@ -164,9 +156,9 @@ msgstr "Importer une image"
 msgid "Import CSV"
 msgstr "Importer CSV"
 
-#: diviform2pdf.php:1605
-msgid "Import Data"
-msgstr "Importer les données"
+#: diviform2pdf.php:1509
+msgid "Import picture"
+msgstr "Importer l'image"
 
 #: diviform2pdf.php:472
 msgid "item"
@@ -183,10 +175,6 @@ msgstr "paysage"
 #: diviform2pdf.php:1207
 msgid "Line Height"
 msgstr "Hauteur de la ligne"
-
-#: diviform2pdf.php:1568
-msgid "Match CSV Column"
-msgstr "Colonne CSV correspondante"
 
 #: diviform2pdf.php:1173
 msgid "Media type"
@@ -338,10 +326,6 @@ msgstr "Suppression du modèle"
 msgid "Template saved successfully"
 msgstr "Le modèle a été sauvegardé avec succès"
 
-#: diviform2pdf.php:1703
-msgid "the import was successful. See by yourself"
-msgstr "l'importation a réussi. Voir par vous-même"
-
 #: diviform2pdf.php:529
 msgid ""
 "This page will show a form when you have at least one submission. Until then,"
@@ -361,10 +345,6 @@ msgstr "Pour modifier le titre du champ"
 #: diviform2pdf.php:204
 msgid "Type something..."
 msgstr "Tapez quelque chose..."
-
-#: diviform2pdf.php:1597
-msgid "Upload CSV"
-msgstr "Télécharger le CSV "
 
 #: diviform2pdf.php:1421
 msgid "Use"

@@ -50,9 +50,9 @@ function form_to_pdf_init() {
 }
 // add css and script 
 function forms_to_pdf_enqueue() {
-    wp_enqueue_style ('boostrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css');
+    wp_enqueue_style ('bootstrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css');
     wp_enqueue_style ('style'         , plugins_url('/css/style.css',FORM_TO_PDF_FILE));
-    wp_enqueue_script('boostrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js',"","",true);
+    wp_enqueue_script('bootstrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js',"","",true);
     wp_enqueue_script('feather'       ,'https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js',"","",true);
     wp_enqueue_script('form_to_pdf_js', plugins_url('/script/script.js', FORM_TO_PDF_FILE));    
 }
@@ -350,16 +350,8 @@ function form_to_pdf_submenu_cb() {
                                                                                 echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="visible_'.$key.'" id="" value="1"></span>'; 
                                                                             echo'</div>';                                                                
                                                                             echo'</li>';
-                                                                       // }
-                                                                        
+                                                                       // } 
                                                                     }
-                                                                    echo'<li class="list-group-item">';
-                                                                        echo '<div class="input-group mb-3">';  
-                                                                            echo '<span class="input-group-text" id="basic-addon3">'.__('Submit date','form-pdf').'</span>';
-                                                                            echo '<input  type="text" class="form-control" id="basic-url" name="submit_date" value="'.__('Submit date','form-pdf').'" aria-describedby="basic-addon3">';
-                                                                            echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="visible_submit_date" id="" value="1"></span>'; 
-                                                                        echo'</div>';  
-                                                                    echo'</li>';
                                                                     break; 
                                                                 }                      
                                                             }
@@ -390,7 +382,7 @@ function form_to_pdf_submenu_cb() {
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="staticBackdropLabel"><?php echo __('Edit Information','form-pdf');?></h5>
+                                                        <h5 class="modal-title" id="staticBackdropLabel"><?php echo __('Edit the information','form-pdf');?></h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                 <div class="modal-body">
@@ -477,7 +469,7 @@ function form_to_pdf_submenu_cb() {
                                                 <?php echo '</div>';                                                  
                                             echo '</div>'; //fin col  
                                             // display the number of item in the table
-                                            echo '<div class="d-flex justify-content-end"><span class="">'.(($total_entries == 1) ? "1 " . __('item','form-pdf') : $total_entries . ' ' . __('items','form-pdf')).'</span></div>';         
+                                            echo '<div class="d-flex justify-content-end" ><span id="totalEntrie">'.(($total_entries == 1) ? "1 " . __('item','form-pdf') : $total_entries . ' ' . __('items','form-pdf')).'</span></div>';         
                                         echo '</div>'; //  fin row                                           
                                     echo '</div>';  // fin card select bulk actions  id="bulk-export"   
 
@@ -1046,11 +1038,9 @@ function forms_to_pdf_templates_submenu_cb(){
             default:
                 $paper_orientation = "";
         }   
-    
             //update in the database
             $updateTmp = $wpdb->query($wpdb->prepare("UPDATE `".TMP_TABLE_NAME."` SET `title_pdf`=%s , `width_pdf`=%d , `height_pdf`=%d , `size_paper`=%s , `tmp_font`=%s , `size_font`=%d , `line_height`=%d , `paper_orientation`=%s , `media_type`=%s, `tmp_status`=%d where `id_template`=%d ", $title_pdf, $width_pdf, $height_pdf, $size_paper, $font_pdf, $size_font, $line_height, $paper_orientation, $media_type, $tmpStatus,$id_template));
         
-
             //if the update has been done in the database, in this case a confirmation message
             if($updateTmp !==false){
                 ?>
@@ -1063,10 +1053,10 @@ function forms_to_pdf_templates_submenu_cb(){
                     <svg class="bi flex-shrink-0 me-2" width="24" height="24"><use xlink:href="#check-circle-fill"/></svg>
                         <?php echo __('Template : ','form-pdf');
                         echo $name_template; 
-                        echo __(' change successfully','form-pdf'); ?>
+                        echo __(' successful change','form-pdf'); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            <?php 
+                <?php 
             }
     }
 
@@ -1169,8 +1159,8 @@ function forms_to_pdf_templates_submenu_cb(){
                                             <span class="input-group-text"><?php echo __('Size paper','form-pdf');?></span>
                                             <select class="form-select" id="" name="editSizePaper_<?= $tmp->id_template?>" onchange="changeWidthNHeight(this);"  aria-label=""> 
                                                 <option value="" >---<?php echo __('Select size paper','form-pdf');?>---</option>                                        
-                                                <option value="A4PORTRAIT" data-width='595' data-height="842" <?php if($tmp->size_paper=="a4_portrait") {print "selected";}?> >A4 (<?php echo __('PORTRAIT','form-pdf');?>) (595x842)</option>
-                                                <option value="a4_landscape" data-width="842" data-height="595" <?php if($tmp->size_paper=="a4_landscape") {print "selected";}?> >A4 (<?php echo __('LANDSCAPE','form-pdf');?>) (842x595)</option>
+                                                <option value="A4PORTRAIT" data-width='595' data-height="842" <?php if($tmp->size_paper=="a4_portrait") {print "selected";}?> >A4 (<?php echo __('portrait','form-pdf');?>) (595x842)</option>
+                                                <option value="a4_landscape" data-width="842" data-height="595" <?php if($tmp->size_paper=="a4_landscape") {print "selected";}?> >A4 (<?php echo __('landscape','form-pdf');?>) (842x595)</option>
                                                 <option value="letter" data-width="612" data-height="792" <?php if($tmp->size_paper=="letter") {print "selected";}?> ><?php echo __('letter','form-pdf');?> (612x792)</option>
                                                 <option value="note" data-width="540" data-height="720" <?php if($tmp->size_paper=="note") {print "selected";}?>><?php echo __('note','form-pdf');?> (540x720)</option>
                                                 <option value="legal" data-width="612" data-height="1008" <?php if($tmp->size_paper=="legal") {print "selected";}?> ><?php echo __('legal','form-pdf');?> (612x1008)</option>
@@ -1247,7 +1237,7 @@ function forms_to_pdf_templates_submenu_cb(){
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text"><?php echo __('Title PDF','form-pdf');?></span>
+                                            <span class="input-group-text"><?php echo __('Title on PDF','form-pdf');?></span>
                                             <input type="text" class="form-control" name="addTitlePDF" id="editTitlePDF" value ="<?php echo __('(No title)','form-pdf');?>" aria-label="" required>
                                             <span class="input-group-text"><?php echo __('Status','form-pdf');?></span>
                                             <!-- choice to use or not a new model -->
@@ -1272,8 +1262,8 @@ function forms_to_pdf_templates_submenu_cb(){
                                             <!-- choice of paper size -->
                                             <select class="form-select"  name="addSizePaper" onchange="changeWidthNHeight(this);" aria-label=""> 
                                                 <option value="" >---<?php echo __('Select size paper','form-pdf');?>---</option>                                        
-                                                <option value="a4_portrait" data-width='595' data-height='842'>A4 (<?php echo __('PORTRAIT','form-pdf');?>) (595x842)</option>
-                                                <option value="a4_landscape" data-width="842" data-height="595" >A4 (<?php echo __('LANDSCAPE','form-pdf');?>) (842x595)</option>
+                                                <option value="a4_portrait" data-width='595' data-height='842'>A4 (<?php echo __('portrait','form-pdf');?>) (595x842)</option>
+                                                <option value="a4_landscape" data-width="842" data-height="595" >A4 (<?php echo __('landscape','form-pdf');?>) (842x595)</option>
                                                 <option value="letter" data-width="612" data-height="792" ><?php echo __('letter','form-pdf');?> (612x792)</option>
                                                 <option value="note" data-width="540" data-height="720" ><?php echo __('note','form-pdf');?> (540x720)</option>
                                                 <option value="legal" data-width="612" data-height="1008" ><?php echo __('legal','form-pdf');?> (612x1008)</option>
@@ -1378,8 +1368,8 @@ function forms_to_pdf_templates_submenu_cb(){
                 <section class="py-5 text-center container">
                     <div class="row py-lg-5">
                         <div class="col-lg-6 col-md-8 mx-auto">
-                            <h1 class="fw-light"><?php echo __('Sample templates ','form-pdf')?></h1>
-                            <p class="lead text-muted"><?php echo __('Here you can add your templates. Or simply modify them as you wish.','form-pdf')?></p>
+                            <h1 class="fw-light">Exemples de modèles</h1>
+                            <p class="lead text-muted">Ici, vous pouvez ajouter vos modèles. Ou simplement les modifier comme vous le souhaitez.</p>
                             <p>
                                 <a href="#" class="btn btn-primary my-2" onclick="launchModalAddTemplate()"><?php echo __('Add New','form-pdf')?></a>                                
                                 <button type="submit" name="selectYourTemplate" value="" class="btn btn-secondary my-2"><?php echo __('Select your template','form-pdf')?></button>
@@ -1452,6 +1442,7 @@ function forms_to_pdf_templates_submenu_cb(){
             </form>
     </main>
     <?php 
+   
 }
 
 function forms_to_pdf_import_submenu_cb(){
@@ -1493,19 +1484,19 @@ function forms_to_pdf_import_submenu_cb(){
                         // $statusMsg = "The file ".$fileName." has been uploaded successfully.";
                         echo '<script>window.alert("Le fichier '.$fileName.' a été envoyé avec succés.");</script>';
                     }else{
-                        $df2p_img_upload_error->add('Send_img_fail','Sending file fails, try again in a few moments.');
+                        echo '<script>window.alert("Sending file fails, try again in a few moments");</script>';
                     } 
                 }else{
-                    $df2p_img_upload_error->add('sending error','An error occurred while sending the file');
+                    echo '<script>window.alert("An error occurred while sending the file");</script>';
                 }
             }else{
-                $df2p_img_upload_error->add('only_images','Only JPG, JPEG, PNG and PDF images can be sent');
-                // echo '<script>window.alert("Only JPG, JPEG, PNG and PDF images can be sent");</script>';
+                echo '<script>window.alert("Only_images','Only JPG, JPEG, PNG and PDF images can be sent");</script>';
             }
         }else{
             echo '<script>window.alert("Veuillez choisir un fichier à envoyer");</script>';
         }
     }
+
     ?>
     <!-- Navs of imports begin -->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -1513,9 +1504,8 @@ function forms_to_pdf_import_submenu_cb(){
             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true"><?php echo __('Import CSV','form-pdf'); ?></button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false"><?php echo __('Import picture','form-pdf'); ?></button>
-        </li>
-        
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false"><?php echo __('Import a picture','form-pdf'); ?></button>
+        </li>  
        
     </ul>
     <div class="tab-content" id="myTabContent">  
@@ -1556,46 +1546,28 @@ function forms_to_pdf_import_submenu_cb(){
                             // echo '<input type="submit" name="" class="button-primary" value="'. __('View Form', 'form-pdf').'" />';
                         echo '</form>'; // fin de form  
                         echo '</div>';
-                    } 
+                    } else {
+                        ?>
+                        <br>
+                            <div class="alert alert-dark" role="alert">
+                               <?php echo __("You must wait for the submission of a form to import","form-pdf") ?>
+                            </div>
+                        <?php
+                    }
 
                     if(isset($_REQUEST['form-name'])&&$_REQUEST['form-name']){
                     ?>
                         <!-- table match csv -->
                     <form method="post" enctype="multipart/form-data">                                  
-                        <table class="table table-success table-striped">
-                                <thead>
-                                    <tr class="form-field form-required">
-                                        <th><?php echo __('Field name','form-test'); ?></th>
-                                        <th><?php echo __('Match CSV Column','form-test'); ?></th>
-                                        <th><?php echo __('Type','form-test'); ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <?php
-                                if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {  
-                                    foreach ($posts as $post) { 
-                                        if ($data = get_post_meta($post->ID, 'forms_to_pdf', true)){
-                                            if ($data['extra']['submitted_on'] == $_REQUEST['form-name']){
-                                                foreach($data['data'] as $value){
-                                                    echo '<tr class="form-field form-required"><td> '.__($value['original_name'],'form-test').'</td><td><input class="" type="text" name="form_match_key['.$value['original_name'].']" value="'.$value['original_name'].'"></td><td>'.__($value['type'],"form-test").'</td></tr>';
-                                                }break;
-                                            
-                                            }
-                                        }                           
-                                    }
-                                }
-                                ?>
-                            </tbody>
-                        </table> 
-                                
+                                                   
                         <table class="table table-borderless">
                             <tbody><tr>
-                                    <th><h3 class=""><?php echo __('Import CSV','form-test'); ?></h3></th>
+                                    <th><h3 class=""><?php echo __('Import CSV','form-pdf'); ?></h3></th>
                                     <td>	
                                     </td>	
                                 </tr>
                                 <tr class="form-field form-required">
-                                    <th><label for="importFormList"><?php echo __('Upload CSV :','form-test'); ?></label></th>
+                                    <th><label for="importFormList"><?php echo __('Upload CSV :','form-pdf'); ?></label></th>
                                     <td>
                                         <input type="file" name="importformlist" id="importformlist" onchange="checkfile(this);">
                                     </td>
@@ -1603,7 +1575,7 @@ function forms_to_pdf_import_submenu_cb(){
                                 <tr class="form-field form-required">
                                     <th></th>
                                     <td>
-                                        <input type="submit" id="import_csv" name="submit_csv" value="Import Data" class="button button-primary">
+                                        <input type="submit" id="import_csv" name="submit_csv" accept=".csv" value="<?php echo __('Import Data','form-pdf'); ?>" class="button button-primary">
                                     </td>
                                 </tr>
                             </tbody></table>
@@ -1660,10 +1632,11 @@ function forms_to_pdf_import_submenu_cb(){
                             foreach($data["data"] as $key => $value){
                                 foreach($data_test as $key2 => $field){ 
                                 $data_csv[] = [
-                                    "label"         => $data["data"][$key2]["label"],                                   
-                                    "original_name" => $data["data"][$key2]["original_name"], 
-                                    "value"         => $field, 
-                                    "type"          => $data["data"][$key2]["type"]                 
+                                    "label"          => $data["data"][$key2]["label"],                                   
+                                    "original_name"  => $data["data"][$key2]["original_name"], 
+                                    "original_name2" => $data["data"][$key2]["original_name"], 
+                                    "value"          => $field, 
+                                    "type"           => $data["data"][$key2]["type"]                 
                                 ];
                             }break;               
                         }break;
@@ -1689,7 +1662,6 @@ function forms_to_pdf_import_submenu_cb(){
                                     'post'            => $_POST,
                                 )
                     );
-
                 }
                 ?>
                 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -1701,11 +1673,10 @@ function forms_to_pdf_import_submenu_cb(){
                 <div class="alert alert-success d-flex align-items-center" role="alert">
                  <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
                 <div>
-                 l'importation vient d'être terminé avec succes.
+                 <?php echo __('the import was successful. See by yourself','form-pdf'); echo '<a href="'.(admin_url(esc_url("/edit.php?post_type=formstopdf_db&page=forms_to_pdf_home"))).'">'.__(' here.','form-pdf').'</a>'; ?>
                 </div>
                 </div>
             <?php
-        
         } 
             ?>
          </div>                  
@@ -1793,8 +1764,9 @@ function download_or_delete_img_f2p(){
         $id = $_POST['download_img'];
 
         if(!empty($id)){
-                    // selectionner une image dans la BDD           
-                    $sql = $wpdb->prepare("SELECT  `id_img`, `img_title`, `img_blob`, `img_type` FROM ".IMG_TABLE_NAME." WHERE `id_img`= %d",$id);
+                    // select an image from the database            
+                    $sql = $wpdb->prepare("SELECT  `id_img`, `img_title`, `img_blob`,
+                     `img_type` FROM ".IMG_TABLE_NAME." WHERE `id_img`= %d",$id);
                     $resultById = $wpdb->get_results($sql);
         
                 
@@ -1825,7 +1797,7 @@ function download_or_delete_img_f2p(){
         }
     }
 
-            //supprimer une image depuis la BDD
+            //delete an image from the database
         if(isset($_POST['delete_img']) && $_POST['delete_img']){
          
             
@@ -1945,7 +1917,7 @@ function forms_to_pdf_download_pdf() {
     if(isset($_REQUEST['export_form']) && $_REQUEST['export_form']=="pdf" && isset($_POST['download']) && $_POST['download']){    
         if (isset($_REQUEST['form-name'])) {    
 
-                // recuperation de toute template
+                // recovery of any template
             $sql_tmp = $wpdb->prepare("SELECT  `id_template`,`title_pdf`, `width_pdf`, `height_pdf`, `size_paper`, `tmp_font`, `size_font`, `line_height`, `paper_orientation`, `media_type`,`tmp_status`,`img_id`  FROM `".TMP_TABLE_NAME."` ORDER BY `title_pdf` ASC");
             $templates = $wpdb->get_results($sql_tmp);
 
@@ -1960,10 +1932,21 @@ function forms_to_pdf_download_pdf() {
                         $pdf = new Dompdf\Dompdf();
                         $options = $pdf->getOptions();
                         $pdf->getOptions()->set('defaultFont', $template->tmp_font); 
+                        // 
                         $options->set('isRemoteEnabled', true);                
                         $pdf->setOptions($options);
                         $pdf->setPaper($template->size_paper, $template->paper_orientation);                        
-                        $titlePdf = $template->title_pdf;             
+                        $titlePdf = $template->title_pdf;    
+                        
+                        // $font = \FontLib\Font::load('../../fontfile.ttf');
+                        // $font->parse();  // for getFontWeight() to work this call must be done first!
+                        // echo $font->getFontName() .'<br>';
+                        // echo $font->getFontSubfamily() .'<br>';
+                        // echo $font->getFontSubfamilyID() .'<br>';
+                        // echo $font->getFontFullName() .'<br>';
+                        // echo $font->getFontVersion() .'<br>';
+                        // echo $font->getFontWeight() .'<br>';
+                        // echo $font->getFontPostscriptName() .'<br>';
                                             
                         // display image when is selected in template 
                         $sql_logo= $wpdb->prepare("SELECT `id_img`, `img_blob`, `img_type`,`img_title` FROM `".IMG_TABLE_NAME."` WHERE `id_img`=%d",$template->img_id);
@@ -2000,7 +1983,7 @@ function forms_to_pdf_download_pdf() {
                 // add a picture if selected in template
                 if(!empty($resultLogo)){
                     foreach($resultLogo as $img){                                          
-                        $content.='<img src="data:image/'.$img->img_type.';base64,'.$img->img_blob.'" class="card-img-top" alt="'.__('Lgo','form-pdf').'" height="100px" width="100px">';
+                        $content.='<img src="data:image/'.$img->img_type.';base64,'.$img->img_blob.'" class="card-img-top" alt="'.__('Logo','form-pdf').'" height="100px" width="100px">';
                     }
                 }
                 $content.= '<div class="container"><div style="text-align:center;font-size:18px;margin:20px;line-height:30px;">'.$form_title.'</div>';		
@@ -2234,10 +2217,27 @@ function create_table_df2p_entry_add_template(){
 				`tmp_status` tinyint(1),
 				UNIQUE KEY id_template (id_template)
 		)$charset_collate;";
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+        dbDelta( $sql );
+    }
+}
+
+function create_table_df2p_entry_add_img(){
+	global $wpdb;
+	$table_name = $wpdb->prefix .'df2p_img';
+	$charset_collate = $wpdb->get_charset_collate();
+	if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
+        $sql = "CREATE TABLE " . $table_name . " (
+				`id_img` int(11) NOT NULL AUTO_INCREMENT,
+				`img_title` varchar(50) NOT NULL,
+                `img_type` varchar(50) NOT NULL,
+                `img_desc` varchar(100) NOT NULL,
+				`img_blob` longblob,
+				UNIQUE KEY id_template (id_img)
+		)$charset_collate;";
 
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
     }
-
 }
 

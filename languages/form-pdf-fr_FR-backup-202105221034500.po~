@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Divi Form2PDF\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-27 23:36+0000\n"
-"PO-Revision-Date: 2021-04-29 20:53+0000\n"
-"Last-Translator: Mohammed Rabaj <rabaj.mohammed@outlook.com>\n"
+"POT-Creation-Date: 2021-05-22 08:01+0000\n"
+"PO-Revision-Date: 2021-05-22 10:32+0000\n"
+"Last-Translator: \n"
 "Language-Team: Français\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
@@ -12,8 +12,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.5.2; wp-5.7.1\n"
+"X-Loco-Version: 2.5.2; wp-5.7.2\n"
 "X-Domain: form-pdf"
+
+#: diviform2pdf.php:
+msgid "(No title)"
+msgstr "(Pas de titre)"
+
+#: diviform2pdf.php:1146
+msgid "Activated"
+msgstr "Activé"
+
+#: diviform2pdf.php:1438
+msgid "Add New"
+msgstr "Ajouter un nouveau"
 
 #: diviform2pdf.php:849
 msgid "Add New Divi Form2PDF"
@@ -37,6 +49,14 @@ msgstr "Appliquer"
 msgid "Bulk Actions"
 msgstr "Actions groupées"
 
+#: diviform2pdf.php:372
+msgid "Close"
+msgstr "Fermer"
+
+#: diviform2pdf.php:1235
+msgid "Create PDF"
+msgstr "Créer un PDF"
+
 #: diviform2pdf.php:175 diviform2pdf.php:653 diviform2pdf.php:751
 msgid "Date"
 msgstr ""
@@ -44,6 +64,10 @@ msgstr ""
 #: diviform2pdf.php:225
 msgid "Delete"
 msgstr "Supprimer"
+
+#: diviform2pdf.php:322
+msgid "Display settings"
+msgstr "Paramètres d'affichage"
 
 #. Name of the plugin
 msgid "Divi Form2PDF"
@@ -54,6 +78,10 @@ msgctxt "Divi Form2PDF"
 msgid "Add New"
 msgstr ""
 
+#: diviform2pdf.php:1767
+msgid "Download"
+msgstr "Télécharger"
+
 #: diviform2pdf.php:239
 msgid "Download CSV File"
 msgstr "Télécharger le fichier CSV"
@@ -62,13 +90,21 @@ msgstr "Télécharger le fichier CSV"
 msgid "Download PDF FILE"
 msgstr "Télécharger le fichier PDF"
 
+#: diviform2pdf.php:1417
+msgid "Edit"
+msgstr "Modifier"
+
 #: diviform2pdf.php:851
 msgid "Edit Divi Form2PDF"
 msgstr "Modifier Divi Form2PDF"
 
+#: diviform2pdf.php:1123
+msgid "Edit template"
+msgstr "Modifier le modèle"
+
 #: diviform2pdf.php:161
-msgid "Edit Information"
-msgstr "Informations sur l'édition"
+msgid "Edit the Information"
+msgstr "Modifier les informations"
 
 #: diviform2pdf.php:54 diviform2pdf.php:55
 msgid "Export"
@@ -82,9 +118,21 @@ msgstr "Exporter le formulaire"
 msgid "Export to..."
 msgstr "Exporter vers ..."
 
+#: diviform2pdf.php:1189
+msgid "Font"
+msgstr "Police"
+
 #: diviform2pdf.php:128
 msgid "from here."
 msgstr "à partir d'ici."
+
+#: diviform2pdf.php:1156
+msgid "Height"
+msgstr "Hauteur"
+
+#: diviform2pdf.php:1374
+msgid "Here you can add your templates. Or simply modify them as you wish"
+msgstr "Ici, vous pouvez ajouter vos modèles. Ou simplement les modifier comme vous le souhaitez"
 
 #. Author URI of the plugin
 msgid "https://www.aboujihade.com"
@@ -93,6 +141,42 @@ msgstr ""
 #. URI of the plugin
 msgid "https://www.undefined.fr/"
 msgstr ""
+
+#: diviform2pdf.php:1740
+msgid "Import"
+msgstr "Importer"
+
+#: diviform2pdf.php:1718
+msgid "Import a picture"
+msgstr "Importer une image"
+
+#: diviform2pdf.php:1506
+msgid "Import CSV"
+msgstr "Importer CSV"
+
+#: diviform2pdf.php:1509
+msgid "Import picture"
+msgstr "Importer l'image"
+
+#: diviform2pdf.php:472
+msgid "item"
+msgstr "élément"
+
+#: diviform2pdf.php:472
+msgid "itmes"
+msgstr "éléments"
+
+#: diviform2pdf.php:1165
+msgid "landscape"
+msgstr "paysage"
+
+#: diviform2pdf.php:1207
+msgid "Line Height"
+msgstr "Hauteur de la ligne"
+
+#: diviform2pdf.php:1173
+msgid "Media type"
+msgstr "Type de média"
 
 #. Author of the plugin
 msgid "Mohammed Rabaj"
@@ -114,9 +198,25 @@ msgstr "Aucune soumission de formulaire de contact n'a été trouvée."
 msgid "No records found."
 msgstr "Aucun dossier trouvé."
 
+#: diviform2pdf.php:1437
+msgid "No Templates Found"
+msgstr "Aucun modèle trouvé"
+
+#: diviform2pdf.php:1145
+msgid "Not activated"
+msgstr "Non activé"
+
+#: diviform2pdf.php:1725
+msgid "Only pictures of type"
+msgstr "Seulement des photos de type"
+
 #: diviform2pdf.php:854
 msgid "Parent Divi Form2PDF:"
 msgstr ""
+
+#: diviform2pdf.php:1843
+msgid "Picture delete successfully"
+msgstr "Photo supprimée avec succès"
 
 #: diviform2pdf.php:844
 msgctxt "post type general name"
@@ -134,11 +234,15 @@ msgstr "Réinitialiser tout"
 
 #. Description of the plugin
 msgid "Retrieve the data in order to download it as a PDF"
-msgstr ""
+msgstr "Récupérer les données afin de les télécharger au format PDF"
 
 #: diviform2pdf.php:861
 msgid "Retrieve the data in order to download it as a PDF."
 msgstr "Récupérer les données afin de les télécharger au format PDF"
+
+#: diviform2pdf.php:1373
+msgid "Sample templates"
+msgstr "Exemples de modèles"
 
 #: diviform2pdf.php:183
 msgid "Save Changes"
@@ -168,6 +272,34 @@ msgstr "Sélectionnez le nom du formulaire"
 msgid "Select form name :"
 msgstr "Sélectionnez le nom du formulaire :"
 
+#: diviform2pdf.php:1175
+msgid "Select media type"
+msgstr "Sélectionnez le type de support"
+
+#: diviform2pdf.php:1163
+msgid "Select size paper"
+msgstr "Sélectionner le format du papier"
+
+#: diviform2pdf.php:1377
+msgid "Select your template"
+msgstr "Sélectionnez votre modèle"
+
+#: diviform2pdf.php:1199
+msgid "Size"
+msgstr "Taille"
+
+#: diviform2pdf.php:1161
+msgid "Size paper"
+msgstr "Taille du papier"
+
+#: diviform2pdf.php:1143
+msgid "Status"
+msgstr "statut"
+
+#: diviform2pdf.php:359
+msgid "Submit date"
+msgstr "Date de soumission"
+
 #: diviform2pdf.php:653
 msgid "Submitted By"
 msgstr "Soumis par"
@@ -175,6 +307,22 @@ msgstr "Soumis par"
 #: diviform2pdf.php:653 diviform2pdf.php:751
 msgid "Submitted On"
 msgstr "Soumis le"
+
+#: diviform2pdf.php:1058
+msgid "successful change"
+msgstr "changement réussis"
+
+#: diviform2pdf.php:1056
+msgid "Template"
+msgstr "Modèle"
+
+#: diviform2pdf.php:1084
+msgid "Template remove"
+msgstr "Suppression du modèle"
+
+#: diviform2pdf.php:967
+msgid "Template saved successfully"
+msgstr "Le modèle a été sauvegardé avec succès"
 
 #: diviform2pdf.php:529
 msgid ""
@@ -184,25 +332,46 @@ msgstr ""
 "Cette page affichera un formulaire lorsque vous aurez reçu au moins une "
 "soumission. En attendant, profitez de cette photo de chat !"
 
+#: diviform2pdf.php:1141
+msgid "Title on PDF"
+msgstr "Titre sur le PDF"
+
 #: diviform2pdf.php:128
-#| msgid ""
-#| "To change the Field title, Hide field and change the position of fields "
-#| "using Drag and Drop"
-msgid ""
-"To change the Field title, Hide field and change the position of fields "
-"using Drag and Drop "
-msgstr ""
-"Pour modifier le titre du champ, masquer le champ et changer la position des "
-"champs en utilisant la fonction glisser-déposer"
+msgid "To change the Field title"
+msgstr "Pour modifier le titre du champ"
 
 #: diviform2pdf.php:204
 msgid "Type something..."
 msgstr "Tapez quelque chose..."
 
+#: diviform2pdf.php:1421
+msgid "Use"
+msgstr "Utilisez"
+
 #: diviform2pdf.php:852
 msgid "View Divi Form2PDF"
 msgstr "Voir Divi Form2PDF"
 
-#: diviform2pdf.php:268
-msgid "submit date"
-msgstr "date de soumission"
+#: diviform2pdf.php:269
+msgid "View Form Information"
+msgstr "Afficher les informations sur le formulaire"
+
+#: diviform2pdf.php:1152
+msgid "Width"
+msgstr "Largeur"
+
+#: diviform2pdf.php:1555
+msgid "You must wait for the submission of a form to import"
+msgstr "Vous devez attendre la soumission d'un formulaire pour importer"
+
+#: diviform2pdf.php:263
+msgid "Your-email"
+msgstr "Votre-mail"
+
+#: diviform2pdf.php:264
+msgid "Your-message"
+msgstr "Votre-message"
+
+#: diviform2pdf.php:262
+msgid "Your-name"
+msgstr "Votre-nom"

@@ -30,19 +30,20 @@ jQuery(document).ready(function($) {
 			})()
 
 		//disabled button when "non record found"
-
 		jQuery("#buttonDownload").on("mouseenter", function (){
 			if(jQuery(".norecordsfound").val()=="nofound"){
 				jQuery("#buttonDownload").attr("disabled", true)
-				console.log("tes")
 			}	
 		})
 		jQuery("#todoaction").on("mouseenter", function (){
 			if(jQuery(".norecordsfound").val()=="nofound"){
 				jQuery("#todoaction").attr("disabled", true)
-				console.log("tes")
 			}	
 		})
+		//impose the number of elements if no entry in the table has been found 
+		if(jQuery(".norecordsfound").val()=="nofound"){
+			jQuery("#totalEntrie").text("0 élément")
+		}
 	}
 
 	jQuery('#img_historique').hide();
