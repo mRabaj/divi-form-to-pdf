@@ -12,7 +12,7 @@
  * Author Name: Mohammed Rabaj (rabaj.mohammed@outlook.com)  
  * Author: Mohammed Rabaj 
  * Domain Path: /languages  
- * Text Domain: linky 
+ * Text Domain: form-pdf
  * Author URI: https://www.aboujihade.com  
  */
 
@@ -28,7 +28,7 @@ define('TMP_TABLE_NAME', $wpdb->prefix.'df2p_templates');
 add_action('plugins_loaded', 'form_to_pdf_init');
 
 function form_to_pdf_init() {
-    // le chemin pour la traduction du plugin 
+    // the path for the translation of the plugin 
     load_plugin_textdomain('form-pdf', false, dirname(plugin_basename(FORM_TO_PDF_FILE)) . '/languages/');
 
     add_filter('et_contact_page_headers', 'forms_to_pdf_et_contact_page_headers', 10, 10);
@@ -46,15 +46,14 @@ function form_to_pdf_init() {
     add_action('admin_init', 'update_in_database_f2p', 1);
     add_action('admin_init', 'download_or_delete_img_f2p', 1);
     add_action('admin_menu', 'form_to_pdf_submenu');
-
 }
 // add css and script 
 function forms_to_pdf_enqueue() {
     wp_enqueue_style ('bootstrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css');
-    wp_enqueue_style ('style'         , plugins_url('/css/style.css',FORM_TO_PDF_FILE));
+    wp_enqueue_style ('style'          , plugins_url('/css/style.css',FORM_TO_PDF_FILE));
     wp_enqueue_script('bootstrap'      ,'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js',"","",true);
-    wp_enqueue_script('feather'       ,'https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js',"","",true);
-    wp_enqueue_script('form_to_pdf_js', plugins_url('/script/script.js', FORM_TO_PDF_FILE));    
+    wp_enqueue_script('feather'        ,'https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js',"","",true);
+    wp_enqueue_script('form_to_pdf_js' , plugins_url('/script/script.js', FORM_TO_PDF_FILE));    
 }
 // les sous menus du plugin
 function form_to_pdf_submenu() {
@@ -339,9 +338,6 @@ function form_to_pdf_submenu_cb() {
                                                                                 unset($field[$key2]);
                                                                             }
                                                                         }
-                                                                        // $field=array_filter($field);
-                                                                        // $field = array_diff($field, array("",0,null));
-                                                                        // if($field!==""){
                                                                             echo'<li class="list-group-item">';
                                                                             echo '<div class="input-group mb-3">';   
                                                                                 // display the names of the fields                                                                          
@@ -350,7 +346,6 @@ function form_to_pdf_submenu_cb() {
                                                                                 echo'<span class="input-group-text"><span class="dashicons dashicons-visibility"></span><input class="txt_show" type="hidden" name="visible_'.$key.'" id="" value="1"></span>'; 
                                                                             echo'</div>';                                                                
                                                                             echo'</li>';
-                                                                       // } 
                                                                     }
                                                                     break; 
                                                                 }                      
@@ -770,8 +765,6 @@ function form_to_pdf_submenu_cb() {
                                                                         echo '<td class="manage-column column-cb check-column" ><input type="checkbox" name="export_id[]" value="'.$post->ID.'" /></td>';
                                                                         echo '<td class="manage-column"><a href="#" data-id='.$post->ID.' onclick="displayModal(this);"><span data-feather="edit-3"></span></a></td>';                                                                            
                                                                         foreach ($data['data'] as $key => $field) { 
-
-                                                                           // if( !isset($_POST['visible_et_pb_contact_name_0']) || $_POST['visible_et_pb_contact_name_0']==1){
                                                                                
                                                                                 $name = esc_html(html_entity_decode($field['value']));
                                                                                 $name_value=trim(ucfirst(strtolower($name)));
@@ -781,7 +774,7 @@ function form_to_pdf_submenu_cb() {
                                                                                 }else{
                                                                                     echo '<td>'.$name_value.'</td>';
                                                                                 }
-                                                                            //}                                                                           
+                                                                                       
                                                                             if($field['value'] == 'email'){
                                                                                 
                                                                                 $email = esc_html(html_entity_decode($field['value']));
@@ -940,20 +933,20 @@ function forms_to_pdf_templates_submenu_cb(){
             default:
                 $paper_orientation = "";
         }   
-        // les templates
-        $sql_tmp = $wpdb->prepare("SELECT  `id_template`,`title_pdf`, `width_pdf`, `height_pdf`, `size_paper`, `tmp_font`, `size_font`, `line_height`, `paper_orientation`, `media_type`,`tmp_status`  FROM `".TMP_TABLE_NAME."` ORDER BY `title_pdf` ASC");
+        //  templates
+        $sql_tmp = $wpdb->prepare("SELECT  `id_template`,`title_pdf`, `width_pdf`, `height_pdf`, `size_paper`, `tmp_font`, `size_font`, `line_height`, `paper_orientation`, `media_type`,`tmp_status` FROM `".TMP_TABLE_NAME."` ORDER BY `title_pdf` ASC");
         $result_tmp = $wpdb->get_results($sql_tmp);
 
 
-        //Condition si aucun modèle n'a été trouvé dans la bdd, par defaut est celui-ci est sélectionné.
+        //Condition if no model has been found in the database, by default this one is selected.
         if(!empty($result_tmp)){
             //insertion dans la bdd d'un nouveau template
             $newtemplate = $wpdb->query($wpdb->prepare('INSERT INTO '.TMP_TABLE_NAME.'(`title_pdf`, `width_pdf`, `height_pdf`, `size_paper`, `tmp_font`, `size_font`, `line_height`, `paper_orientation`, `media_type`, `tmp_status`,`img_id`) VALUES (%s,%d,%d,%s,%s,%d,%d,%s,%s,%d,%d)', $title_pdf, $width_pdf, $height_pdf, $size_paper, $font_pdf, $size_font, $line_height, $paper_orientation, $media_type, $tmpStatus, $img));
         }else{
-            // on affecte le statut a true par 1
+            //  we assign the status to true 
             $newtemplate = $wpdb->query($wpdb->prepare('INSERT INTO '.TMP_TABLE_NAME.'(`title_pdf`, `width_pdf`, `height_pdf`, `size_paper`, `tmp_font`, `size_font`, `line_height`, `paper_orientation`, `media_type`, `img_id`,`tmp_status`) VALUES (%s,%d,%d,%s,%s,%d,%d,%s,%s,%d,%d)', $title_pdf, $width_pdf, $height_pdf, $size_paper, $font_pdf, $size_font, $line_height, $paper_orientation, $media_type, $img,1));
         }
-        // une alert s'affiche pour ajout d'un nouveau modèle
+        //an alert is displayed for adding a new model
         if($newtemplate !==false){
             ?>
              <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -1756,7 +1749,6 @@ function forms_to_pdf_import_submenu_cb(){
 
 }
    
-
 function download_or_delete_img_f2p(){
     global $wpdb;
     if(isset($_POST['download_img']) && $_POST['download_img']){
@@ -1765,8 +1757,7 @@ function download_or_delete_img_f2p(){
 
         if(!empty($id)){
                     // select an image from the database            
-                    $sql = $wpdb->prepare("SELECT  `id_img`, `img_title`, `img_blob`,
-                     `img_type` FROM ".IMG_TABLE_NAME." WHERE `id_img`= %d",$id);
+                    $sql = $wpdb->prepare("SELECT  `id_img`, `img_title`, `img_blob`, `img_type` FROM ".IMG_TABLE_NAME." WHERE `id_img`= %d",$id);
                     $resultById = $wpdb->get_results($sql);
         
                 
@@ -1824,7 +1815,6 @@ function download_or_delete_img_f2p(){
 
 
 function forms_to_pdf_download_csv() {
-
     if(isset($_REQUEST['export_form']) && $_REQUEST['export_form']=="csv" && isset($_POST['download'])){
         if ($posts = get_posts('post_type=formstopdf_db&posts_per_page=-1')) {
             foreach($posts as $post){
@@ -1932,22 +1922,12 @@ function forms_to_pdf_download_pdf() {
                         $pdf = new Dompdf\Dompdf();
                         $options = $pdf->getOptions();
                         $pdf->getOptions()->set('defaultFont', $template->tmp_font); 
-                        // 
+                        // so that the images can be detected we activate this option
                         $options->set('isRemoteEnabled', true);                
                         $pdf->setOptions($options);
                         $pdf->setPaper($template->size_paper, $template->paper_orientation);                        
                         $titlePdf = $template->title_pdf;    
-                        
-                        // $font = \FontLib\Font::load('../../fontfile.ttf');
-                        // $font->parse();  // for getFontWeight() to work this call must be done first!
-                        // echo $font->getFontName() .'<br>';
-                        // echo $font->getFontSubfamily() .'<br>';
-                        // echo $font->getFontSubfamilyID() .'<br>';
-                        // echo $font->getFontFullName() .'<br>';
-                        // echo $font->getFontVersion() .'<br>';
-                        // echo $font->getFontWeight() .'<br>';
-                        // echo $font->getFontPostscriptName() .'<br>';
-                                            
+                                                                    
                         // display image when is selected in template 
                         $sql_logo= $wpdb->prepare("SELECT `id_img`, `img_blob`, `img_type`,`img_title` FROM `".IMG_TABLE_NAME."` WHERE `id_img`=%d",$template->img_id);
                         $resultLogo = $wpdb->get_results($sql_logo);
@@ -2101,7 +2081,6 @@ function forms_to_pdf_pt_init() {
         'menu_icon'          => 'dashicons-pdf',
         'supports'           => array('title')
     );
-
     register_post_type('formstopdf_db', $args);
 }
 
