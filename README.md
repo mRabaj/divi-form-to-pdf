@@ -1,2 +1,2 @@
 # divi-form-to-pdf
- plugin to save data since Divi Form
+ Plugin to save data since theme Divi Form on Wordpress.
